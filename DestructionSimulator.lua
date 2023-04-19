@@ -1,7 +1,9 @@
+-- Open Sourcely Given By Waza80#8017
+
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
 local BreakModel = function(Object)
-    for i, Part in Object:GetChildren() do
+    for i, Part in pairs(Object:GetChildren()) do
         if Part.Name == "Grounded" or Part.Name == "Part" then
             PartCFrame = Part.CFrame
             local args = {
@@ -11,6 +13,9 @@ local BreakModel = function(Object)
                 [4] = game:GetService("ReplicatedStorage").Launchers.Launchers["Gold Launcher"].Tool.Assets.Rocket.Boom
             }
             game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("explodeRocket"):FireServer(unpack(args))
+            if OrionLib.Flags["instantmode"].Value == false then
+                wait(0.1)
+            end
         end
     end
 end
@@ -35,7 +40,7 @@ end
 
 local Window = OrionLib:MakeWindow(
     {
-        Name = "Destruction Simulator (V1.5)", 
+        Name = "Destruction Simulator (V1.6)", 
         HidePremium = true, 
         SaveConfig = false, 
         IntroEnabled = false
@@ -96,10 +101,10 @@ AreaTab:AddButton(
                         }
                     )
             end
-            for i, v in workspace.Areas:FindFirstChild(OrionLib.Flags["destroy-area"].Value):GetChildren() do
+            for i, v in pairs(workspace.Areas:FindFirstChild(OrionLib.Flags["destroy-area"].Value):GetChildren()) do
                 if v.ClassName == "Folder" then
                     if v.Name == "Spawns" then
-                        for j, Spawn in v:GetChildren() do
+                        for j, Spawn in pairs(v:GetChildren()) do
                             TweenObject(game.Players.LocalPlayer.Character.HumanoidRootPart, {CFrame = Spawn.CFrame}, 0.8)
                             wait(0.85)
                             break
@@ -118,13 +123,13 @@ AreaTab:AddButton(
     {
         Name = "Destroy All Areas ⚠️",
         Callback = function()
-            for i, v in workspace.Areas:GetChildren() do
+            for i, v in pairs(workspace.Areas:GetChildren()) do
                 if v.ClassName == "Folder" then
                     if workspace.BoardsForceLoad:FindFirstChild(v.Name).SurfaceGui.OpenText.Visible == true then
-                        for j, Area in v:GetChildren() do
+                        for j, Area in pairs(v:GetChildren()) do
                             if Area.ClassName == "Folder" then
                                 if Area.Name == "Spawns" then
-                                    for k, Spawn in Area:GetChildren() do
+                                    for k, Spawn in pairs(Area:GetChildren()) do
                                         TweenObject(game.Players.LocalPlayer.Character.HumanoidRootPart, {CFrame = Spawn.CFrame}, 0.8)
                                         wait(0.85)
                                         break
@@ -139,6 +144,13 @@ AreaTab:AddButton(
                 end
             end
         end
+    }
+)
+
+AreaTab:AddToggle(
+    {
+        Name = "Instant Mode ⚠️",
+        Flag = "instantmode"
     }
 )
 
@@ -194,14 +206,14 @@ TeleportsTab:AddButton(
     }
 )
 
-for i, v in {"Area1", "Area2", "Area3", "Area4", "Area5", "Area6", "Area7", "Area8", "Area9", "Area10", "Area11", "Area12", "Area13", "Area14", "Area15", "Area16"} do
+for i, v in pairs({"Area1", "Area2", "Area3", "Area4", "Area5", "Area6", "Area7", "Area8", "Area9", "Area10", "Area11", "Area12", "Area13", "Area14", "Area15", "Area16"}) do
     TeleportsTab:AddButton(
         {
             Name = "Teleport to " .. v,
             Callback = function()
-                for j, Part in workspace.Areas:FindFirstChild(v):GetChildren() do
+                for j, Part in pairs(workspace.Areas:FindFirstChild(v):GetChildren()) do
                     if Part.ClassName == "Folder" and Part.Name == "Spawns" then
-                        for k, Spawn in Part:GetChildren() do
+                        for k, Spawn in pairs(Part:GetChildren()) do
                             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Spawn.CFrame.x, Spawn.CFrame.y + 5, Spawn.CFrame.z)
                         end
                     end
@@ -317,7 +329,7 @@ MiscTab:AddButton(
     {
         Name = "Add All Boosts For 1 Hour",
         Callback = function()
-            for i, v in {"BrickBoost", "CoinBoost", "ExtraSpeed", "SuperJump", "XPBoost"} do
+            for i, v in pairs({"BrickBoost", "CoinBoost", "ExtraSpeed", "SuperJump", "XPBoost"}) do
                 game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("generateBoost"):FireServer(v, 60 * 60, 2)
             end
         end
