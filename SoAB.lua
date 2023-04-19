@@ -56,7 +56,6 @@ ScriptTab:AddToggle(
     }
 )
 
--- ok dont cry its my first script OK?
 local format = function(String)
     String = String:gsub("%$", ''):gsub(" ", ''):gsub(",", "")
     multiplier = string.sub(String, -1)
