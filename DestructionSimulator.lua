@@ -8,11 +8,10 @@ local BreakModel = function(Object)
             PartCFrame = Part.CFrame
             local args = {
                 [1] = os.time(),
-                [2] = game:GetService("ReplicatedStorage").Launchers.Launchers["Gold Launcher"].Tool.Stats,
+                [2] = game:GetService("ReplicatedStorage").Bombs.Bombs["Classic Nuke"].Tool.Stats,
                 [3] = Vector3.new(PartCFrame.x, PartCFrame.y, PartCFrame.z),
-                [4] = game:GetService("ReplicatedStorage").Launchers.Launchers["Gold Launcher"].Tool.Assets.Rocket.Boom
             }
-            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("explodeRocket"):FireServer(unpack(args))
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("explodeBomb"):FireServer(unpack(args))
             if OrionLib.Flags["instantmode"].Value == false then
                 wait(0.1)
             end
@@ -40,7 +39,7 @@ end
 
 local Window = OrionLib:MakeWindow(
     {
-        Name = "Destruction Simulator (V1.6)", 
+        Name = "Destruction Simulator (V1.7)", 
         HidePremium = true, 
         SaveConfig = false, 
         IntroEnabled = false
@@ -206,22 +205,65 @@ TeleportsTab:AddButton(
     }
 )
 
-for i, v in pairs({"Area1", "Area2", "Area3", "Area4", "Area5", "Area6", "Area7", "Area8", "Area9", "Area10", "Area11", "Area12", "Area13", "Area14", "Area15", "Area16"}) do
-    TeleportsTab:AddButton(
-        {
-            Name = "Teleport to " .. v,
-            Callback = function()
-                for j, Part in pairs(workspace.Areas:FindFirstChild(v):GetChildren()) do
-                    if Part.ClassName == "Folder" and Part.Name == "Spawns" then
-                        for k, Spawn in pairs(Part:GetChildren()) do
-                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Spawn.CFrame.x, Spawn.CFrame.y + 5, Spawn.CFrame.z)
-                        end
+TeleportsTab:AddDropdown(
+    {
+        Name = "Area",
+        Options = {
+            "Area1",
+            "Area2",
+            "Area3",
+            "Area4",
+            "Area5",
+            "Area6",
+            "Area7",
+            "Area8",
+            "Area9",
+            "Area10",
+            "Area11",
+            "Area12",
+            "Area13",
+            "Area14",
+            "Area15",
+            "Area16",
+        },
+        Flag = "teleport-area"
+    }
+)
+
+TeleportsTab:AddButton(
+    {
+        Name = "Teleport to Area",
+        Callback = function()
+            Area = OrionLib.Flags["teleport-area"].Value
+            if Area == '...' then
+                return OrionLib:MakeNotification(
+                        {
+                            Name = "No Area Chosen",
+                            Content = "Please select an Area first!",
+                            Time = 3
+                        }
+                    )
+            end
+            for j, Part in pairs(workspace.Areas:FindFirstChild(Area):GetChildren()) do
+                if Part.ClassName == "Folder" and Part.Name == "Spawns" then
+                    for k, Spawn in pairs(Part:GetChildren()) do
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Spawn.CFrame.x, Spawn.CFrame.y + 5, Spawn.CFrame.z)
+                        break
                     end
                 end
             end
-        }
-    )
-end
+        end
+    }
+)
+
+TeleportsTab:AddButton(
+    {
+        Name = "Teleport to spinChar",
+        Callback = function()
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game:GetService("ReplicatedStorage").MapForceLoad.spinChar.Head.CFrame
+        end
+    }
+)
 
 local MiscTab = Window:MakeTab(
     {
@@ -257,7 +299,7 @@ MiscTab:AddToggle(
                 if OrionLib.Flags["unlimitedmoney"].Value == false then
                     break
                 end
-                game:GetService("ReplicatedStorage").Remotes.generateBoost:FireServer("Coins", 4800000, 1000000)
+                game:GetService("ReplicatedStorage").Remotes.generateBoost:FireServer("Coins", 4800000, 99999999)
                 wait(0)
             end
         end
@@ -269,7 +311,7 @@ MiscTab:AddButton(
         Name = "Get Max Level + Rank",
         Callback = function()
             if game:GetService("Players").LocalPlayer.leaderstats.Level.Value == 55 then
-                if game:GetService("Players").LocalPlayer.leaderstats.Rank.Value == 5 then
+                if game:GetService("Players").LocalPlayer.leaderstats.Rank.Value > 4 then
                     return OrionLib:MakeNotification(
                         {
                             Name = "Max Level/Rank Reached",
