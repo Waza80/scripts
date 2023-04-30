@@ -156,6 +156,7 @@ AutoTab:AddToggle(
                                             break
                                         end
                                     end
+                                    
                                 end
                                 if not pcall(function()
                                     game.Players.LocalPlayer.Character.Humanoid.Sit = true
@@ -163,9 +164,9 @@ AutoTab:AddToggle(
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.zero
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.zero
                                     if OrionLib.Flags['blatant-main-toggle'].Value == false then 
-                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Enemy.LeftFoot.CFrame.x, Enemy.LeftFoot.CFrame.y - 5, Enemy.LeftFoot.CFrame.z + 4)
+                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Enemy.LeftFoot.CFrame.x, Enemy.LeftFoot.CFrame.y - 4, Enemy.LeftFoot.CFrame.z + 6)
                                     else
-                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Enemy.LeftHand.CFrame.x, Enemy.HumanoidRootPart.CFrame.y, Enemy.LeftHand.CFrame.z + 6)
+                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Enemy.LeftHand.CFrame.x, Enemy.HumanoidRootPart.CFrame.y + 6, Enemy.LeftHand.CFrame.z + 6)
                                     end
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position,
