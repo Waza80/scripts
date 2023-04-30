@@ -4,7 +4,7 @@ local Wave = nil
 
 local Window = OrionLib:MakeWindow(
     {
-        Name = "KMtSP V1.1", 
+        Name = "KMtSP V1.169", 
         HidePremium = true, 
         SaveConfig = false, 
         IntroEnabled = false
@@ -55,6 +55,8 @@ AutoTab:AddToggle(
                     if OrionLib.Flags['autoprincess-main-toggle'].Value == true then
                         if game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Princess") then
                             game.Players.LocalPlayer.Character.Humanoid:EquipTool(game:GetService("Players").LocalPlayer.Backpack.Princess)
+                            wait(0.5)
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Princess"):WaitForChild("PrincessHug"):FireServer(true)
                         end
                     end
                     game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Battle"):WaitForChild("JoinPrepare"):FireServer()
@@ -87,7 +89,7 @@ AutoTab:AddToggle(
                                     if OrionLib.Flags['safemode-main-toggle'].Value == false then 
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Enemy.HumanoidRootPart.CFrame + Enemy.HumanoidRootPart.CFrame.LookVector * 10
                                     else
-                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Enemy.HumanoidRootPart.CFrame + Enemy.HumanoidRootPart.CFrame.LookVector
+                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Enemy.HumanoidRootPart.CFrame + Enemy.HumanoidRootPart.CFrame.LookVector * 3
                                     end
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position,
