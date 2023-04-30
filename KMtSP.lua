@@ -81,7 +81,7 @@ AutoTab:AddToggle(
                             return
                         end
                         for _, Enemy in pairs(Wave.Enemy:GetChildren()) do
-                            while IsFarming() and workspace.Waves:FindFirstChild(Wave.Name) and Wave:FindFirstChild("Enemy") and Wave.Enemy:FindFirstChild(Enemy.Name) and Enemy:FindFirstChild("HumanoidRootPart") do
+                            while IsFarming() and game.Players.LocalPlayer.Character.Humanoid.Health ~= 0 and workspace.Waves:FindFirstChild(Wave.Name) and Wave:FindFirstChild("Enemy") and Wave.Enemy:FindFirstChild(Enemy.Name) and Enemy:FindFirstChild("HumanoidRootPart") do
                                 wait()
                                 if not pcall(function()
                                     if OrionLib.Flags['safemode-main-toggle'].Value == false then 
@@ -99,12 +99,16 @@ AutoTab:AddToggle(
                                 game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Weapon"):WaitForChild("TakeDamage"):FireServer()
                             end
                         end
+                        if game.Players.LocalPlayer.Character.Humanoid.Health == 0 then
+                            break
+                        end
                     end
                     return
                 end) then
                     wait()
                 end
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.SpawnLocation.CFrame
+                Wave = nil
             end
         end
     }
