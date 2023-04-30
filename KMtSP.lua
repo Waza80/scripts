@@ -3,6 +3,34 @@ local AutoEquip = false
 local hasFused = false
 local InGame = false
 
+if game.PlaceId == 8568266872 then
+	local Place = 1
+else
+    local Place = 2
+end
+
+local ToPrice = function(String)
+    String = tostring(String)
+    String = String:gsub("%$", ''):gsub(" ", ''):gsub(",", "")
+    multiplier = string.lower(string.sub(String, -1))
+    if tonumber(multiplier) then
+        return tonumber(String)
+    end
+    if multiplier == "k" then
+        return tonumber(String:sub(1, -2)) * 1000
+    end
+    if multiplier == "m" then
+        return tonumber(String:sub(1, -2)) * 1000000
+    end
+    if multiplier == "b" then
+        return tonumber(String:sub(1, -2)) * 1000000000
+    end
+    if multiplier == "t" then
+        return tonumber(String:sub(1, -2)) * 1000000000000
+    end
+    return math.huge
+end
+
 local split = function(Text, Pattern)
     chunks = {}
     for substring in Text:gmatch(Pattern) do
@@ -13,7 +41,7 @@ end
 
 local GetPriceByItem = function(Item)
     price = split(string.sub(Item:match('%(.*%)'), 2, string.len(Item)-1), "%S+")
-    price[1] = tonumber(price[1])
+    price[1] = tonumber(ToPrice(price[1]))
     price[2] = price[2]:sub(1, -2)
     return price
 end
@@ -21,7 +49,11 @@ end
 local FindItem = function(table, item)
     for itemNumber, Item in pairs(table) do
         if item == Item then
-            return {itemNumber, Item}
+            if Place == 1 then
+                return {itemNumber, Item}
+            else
+                return {itemNumber + 8, Item}
+            end
         end
     end
     return nil
@@ -76,18 +108,18 @@ AutoTab:AddToggle(
                 game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 0
                 game.Players.LocalPlayer.Character.Humanoid.JumpPower = 0
                 InGame = true
-                wait()
+                task.wait()
                 if game:GetService("Players").LocalPlayer.stats["Battle Region"].Value == 0 then
                     game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Battle"):WaitForChild("JoinPrepare"):FireServer()
                     while game:GetService("Players").LocalPlayer.stats["Battle Region"].Value == 0 do 
-                        wait()
+                        task.wait()
                         if IsFarming() == false then 
                             return 
                         end
                     end
                 end
                 while game:GetService("Players").LocalPlayer.stats["Battle Region"].Value == 0 do
-                    wait()
+                    task.wait()
                     if IsFarming() == false then
                         return
                     end
@@ -102,25 +134,25 @@ AutoTab:AddToggle(
                 spawn(function()
                     while game:GetService("Players").LocalPlayer.stats["Battle Region"].Value ~= 0 and IsFarming() do
                         game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Weapon"):WaitForChild("TakeDamage"):FireServer()
-                        wait()
+                        task.wait()
                     end
                 end)
                 if not pcall(function()
                     while game:GetService("Players").LocalPlayer.stats["Battle Region"].Value ~= 0 do 
                         Wave = game:GetService("Workspace").Waves:FindFirstChild(game:GetService("Players").LocalPlayer.stats["Battle Region"].Value)
-                        wait()
+                        task.wait()
                         if IsFarming() == false then
                             return
                         end
                         for _, Enemy in pairs(Wave.Enemy:GetChildren()) do
                             while IsFarming() and game.Players.LocalPlayer.Character.Humanoid.Health ~= 0 and workspace.Waves:FindFirstChild(Wave.Name) do
-                                wait()
+                                task.wait()
                                 if Enemy:FindFirstChild("Humanoid") then
                                     if Enemy.Humanoid.Health == 0 then
                                         break
                                     end
                                     if Enemy.Humanoid.FloorMaterial.Name == 'Air' then
-                                        if #Wave.Enemy:GetChildren() > 1 then
+                                        if #Wave.Enemy:GetChildren() > 2 then
                                             break
                                         end
                                     end
@@ -130,7 +162,11 @@ AutoTab:AddToggle(
                                     game.Players.LocalPlayer.Character.Humanoid.AutoRotate = false
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.zero
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.zero
-                                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Enemy.LeftFoot.CFrame.x, Enemy.LeftFoot.CFrame.y - 5, Enemy.LeftFoot.CFrame.z + 3)
+                                    if OrionLib.Flags['blatant-main-toggle'].Value == false then 
+                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Enemy.LeftFoot.CFrame.x, Enemy.LeftFoot.CFrame.y - 5, Enemy.LeftFoot.CFrame.z + 4)
+                                    else
+                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Enemy.LeftHand.CFrame.x, Enemy.HumanoidRootPart.CFrame.y, Enemy.LeftHand.CFrame.z + 6)
+                                    end
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position,
                                         Enemy.LeftFoot.CFrame.Position
@@ -147,10 +183,10 @@ AutoTab:AddToggle(
                     end
                     return
                 end) then
-                    wait()
+                    task.wait()
                 end
                 while game:GetService("Players").LocalPlayer.stats["Battle Region"].Value ~= 0 do
-                    wait()
+                    task.wait()
                 end
                 wait(0.5)
             end
@@ -165,13 +201,13 @@ AutoTab:AddToggle(
         Flag = 'autoprincess-main-toggle',
         Callback = function(Value)
             while Value do
-                wait() 
+                task.wait() 
                 if OrionLib.Flags['autoprincess-main-toggle'].Value == false then
                     return 
                 end
                 if game:GetService("Players").LocalPlayer.stats["Battle Region"].Value ~= 0 then
                     for _, Item in pairs({"1007", "1003", "1001"}) do
-                        wait()
+                        task.wait()
                         ProgressionStats = split(game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.Princess.Frame.Main.Scoll.Main.Frame[Item].Progression.Info.Text, "([^/]+)")
                         if tonumber(ProgressionStats[1]) == tonumber(ProgressionStats[2]) then
                             game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Princess"):WaitForChild("PrincessEquip"):FireServer(tonumber(Item))
@@ -183,15 +219,20 @@ AutoTab:AddToggle(
                                     wait(3.5)
                                     break
                                 end
-                                wait()
+                                task.wait()
                             end
                             wait(1)
                             break
                         end
                     end
                 else
-                    for _, Item in pairs({"1006", "1005", "1004"}) do
-                        wait()
+                    if Place == 1 then
+                        AutoPrincessStart = {"1006", "1005", "1004"}
+                    else
+                        AutoPrincessStart = {"1013", "1012", "1011"}
+                    end
+                    for _, Item in pairs(AutoPrincessStart) do
+                        task.wait()
                         ProgressionStats = split(game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.Princess.Frame.Main.Scoll.Main.Frame[Item].Progression.Info.Text, "([^/]+)")
                         if tonumber(ProgressionStats[1]) == tonumber(ProgressionStats[2]) then
                             game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Princess"):WaitForChild("PrincessEquip"):FireServer(tonumber(Item))
@@ -203,7 +244,7 @@ AutoTab:AddToggle(
                                     wait(3.5)
                                     break
                                 end
-                                wait()
+                                task.wait()
                             end
                             wait(1)
                             break
@@ -215,6 +256,14 @@ AutoTab:AddToggle(
     }
 )
 
+AutoTab:AddToggle(
+    {
+        Name = "Blatant Mode",
+        Default = false,
+        Flag = 'blatant-main-toggle'
+    }
+)
+
 EggsTab = Window:MakeTab(
     {
         Name = "Eggs",
@@ -222,21 +271,36 @@ EggsTab = Window:MakeTab(
     }
 )
 
+if Place == 1 then
+    EggOptions = {
+        "Common Egg (50 Coins)",
+        "Uncommon Egg (250 Coins)",
+        "Rare Egg (1000 Coins)",
+        "Epic Egg (5000 Coins)",
+        "Legendary Egg (25000 Coins)",
+        "Mythical Egg (100000 Coins)",
+        "Rainbow Egg 1 (149 Gems)",
+        "Rainbow Egg 2 (349 Gems)"
+    }
+else
+        EggOptions = {
+        "Common Egg (150k Coins)",
+        "Uncommon Egg (750k Coins)",
+        "Rare Egg (3m Coins)",
+        "Epic Egg (15m Coins)",
+        "Legendary Egg (60m Coins)",
+        "Mythical Egg (300m Coins)",
+        "Rainbow Egg 1 (249 Gems)",
+        "Rainbow Egg 2 (449 Gems)"
+    }
+end
+
 EggsTab:AddDropdown(
     {
         Name = "Selected Egg",
         Flag = 'egg-eggs-slider',
-        Default = "Common Egg (50 Coins)",
-        Options = {
-            "Common Egg (50 Coins)",
-            "Uncommon Egg (250 Coins)",
-            "Rare Egg (1000 Coins)",
-            "Epic Egg (5000 Coins)",
-            "Legendary Egg (25000 Coins)",
-            "Mythical Egg (100000 Coins)",
-            "Rainbow Egg 1 (149 Gems)",
-            "Rainbow Egg 2 (349 Gems)"
-        }
+        Default = EggOptions[1],
+        Options = EggOptions
     }
 )
 
@@ -246,16 +310,16 @@ EggsTab:AddButton(
         Callback = function()
             Egg = FindItem(OrionLib.Flags['egg-eggs-slider'].Options, OrionLib.Flags['egg-eggs-slider'].Value)
             EggPrice = GetPriceByItem(Egg[2])
-                if EggPrice[2] == "Coins" then
-                    if game:GetService("Players").LocalPlayer.leaderstats["\240\159\146\176Coin"].Value > EggPrice[1] then
-                        game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open1", {})
-                    end
+            if EggPrice[2] == "Coins" then
+                if game:GetService("Players").LocalPlayer.leaderstats["\240\159\146\176Coin"].Value > EggPrice[1] then
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], 'Open1', {})
                 end
-                if EggPrice[2] == "Gems" then
-                    if game:GetService("Players").LocalPlayer.stats.Gem.Value > EggPrice[1] then
-                        game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open1", {})
-                    end
+            end
+            if EggPrice[2] == "Gems" then
+                if game:GetService("Players").LocalPlayer.stats.Gem.Value > EggPrice[1] then
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], 'Open1', {})
                 end
+            end
         end
     }
 )
@@ -266,16 +330,16 @@ EggsTab:AddButton(
         Callback = function()
             Egg = FindItem(OrionLib.Flags['egg-eggs-slider'].Options, OrionLib.Flags['egg-eggs-slider'].Value)
             EggPrice = GetPriceByItem(Egg[2])
-                if EggPrice[2] == "Coins" then
-                    if game:GetService("Players").LocalPlayer.leaderstats["\240\159\146\176Coin"].Value / 3 > EggPrice[1] then
-                        game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open3", {})
-                    end
+            if EggPrice[2] == "Coins" then
+                if game:GetService("Players").LocalPlayer.leaderstats["\240\159\146\176Coin"].Value / 3 > EggPrice[1] then
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open3", {})
                 end
-                if EggPrice[2] == "Gems" then
-                    if game:GetService("Players").LocalPlayer.stats.Gem.Value / 3 > EggPrice[1] then
-                        game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open3", {})
-                    end
+            end
+            if EggPrice[2] == "Gems" then
+                if game:GetService("Players").LocalPlayer.stats.Gem.Value / 3 > EggPrice[1] then
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open3", {})
                 end
+            end
         end
     }
 )
@@ -287,7 +351,7 @@ EggsTab:AddToggle(
         Default = false,
         Callback = function(Value)
             while Value do
-                wait()
+                wait(0.1)
                 if OrionLib.Flags['autohatch-eggs-toggle'].Value == false then
                     return
                 end
@@ -325,7 +389,7 @@ EggsTab:AddToggle(
         Flag = 'autofuse-eggs-toggle',
         Callback = function(Value)
             while Value do
-                wait()
+                wait(0.1)
                 if OrionLib.Flags['autofuse-eggs-toggle'].Value == false then
                     return
                 end
@@ -389,6 +453,15 @@ MiscTab = Window:MakeTab(
 
 MiscTab:AddButton(
     {
+        Name = "TP to Spawn",
+        Callback = function()
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.SpawnLocation.CFrame
+        end
+    }
+)
+
+MiscTab:AddButton(
+    {
         Name = "Redeem All Codes",
         Callback = function()
             for _, Code in pairs({"like100", "like200", "like300", "like750"}) do
@@ -413,7 +486,7 @@ MiscTab:AddToggle(
         Flag = "freegems-misc-toggle",
         Callback = function(Value)
             while Value do
-                wait()
+                task.wait()
                 if OrionLib.Flags['freegems-misc-toggle'].Value == false then
                     return 
                 end
