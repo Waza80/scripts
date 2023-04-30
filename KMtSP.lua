@@ -4,7 +4,7 @@ local Wave = nil
 
 local Window = OrionLib:MakeWindow(
     {
-        Name = "KMtSP V1", 
+        Name = "KMtSP V1.1", 
         HidePremium = true, 
         SaveConfig = false, 
         IntroEnabled = false
@@ -81,13 +81,13 @@ AutoTab:AddToggle(
                             return
                         end
                         for _, Enemy in pairs(Wave.Enemy:GetChildren()) do
-                            while workspace.Waves:FindFirstChild(Wave.Name) and Wave:FindFirstChild("Enemy") and Wave.Enemy:FindFirstChild(Enemy.Name) and Enemy:FindFirstChild("HumanoidRootPart") do
+                            while IsFarming() and workspace.Waves:FindFirstChild(Wave.Name) and Wave:FindFirstChild("Enemy") and Wave.Enemy:FindFirstChild(Enemy.Name) and Enemy:FindFirstChild("HumanoidRootPart") do
                                 wait()
                                 if not pcall(function()
                                     if OrionLib.Flags['safemode-main-toggle'].Value == false then 
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Enemy.HumanoidRootPart.CFrame + Enemy.HumanoidRootPart.CFrame.LookVector * 10
                                     else
-                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Enemy.HumanoidRootPart.CFrame + Enemy.HumanoidRootPart.CFrame.LookVector
+                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Enemy.HumanoidRootPart.CFrame + Enemy.HumanoidRootPart.CFrame.LookVector * 3
                                     end
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position,
@@ -104,6 +104,7 @@ AutoTab:AddToggle(
                 end) then
                     wait()
                 end
+                wait(5)
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.SpawnLocation.CFrame
             end
         end
@@ -111,7 +112,7 @@ AutoTab:AddToggle(
 )
 
 workspace.Waves.ChildAdded:connect(function(ChildAdded)
-    if InGame == true then
+    if InGame == true and Wave == nil then
         Wave = ChildAdded
     else   
         return
