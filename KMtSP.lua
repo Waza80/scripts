@@ -61,7 +61,7 @@ end
 
 local Window = OrionLib:MakeWindow(
     {
-        Name = "KMtSP V1.69420", 
+        Name = "KMtSP V1.6969420", 
         HidePremium = true, 
         SaveConfig = false, 
         IntroEnabled = false
@@ -126,11 +126,6 @@ AutoTab:AddToggle(
                 end
                 game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 0
                 game.Players.LocalPlayer.Character.Humanoid.JumpPower = 0
-                for i, v in pairs(game:GetService("Workspace").Waves:WaitForChild(game:GetService("Players").LocalPlayer.stats["Battle Region"].Value):GetChildren()) do
-                    if v.Name == "Cheat" then
-                        v:Destroy()
-                    end
-                end
                 spawn(function()
                     while game:GetService("Players").LocalPlayer.stats["Battle Region"].Value ~= 0 and IsFarming() do
                         game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Weapon"):WaitForChild("TakeDamage"):FireServer()
@@ -140,6 +135,11 @@ AutoTab:AddToggle(
                 if not pcall(function()
                     while game:GetService("Players").LocalPlayer.stats["Battle Region"].Value ~= 0 do 
                         Wave = game:GetService("Workspace").Waves:FindFirstChild(game:GetService("Players").LocalPlayer.stats["Battle Region"].Value)
+                        for i, v in pairs(Wave:GetChildren()) do
+                            if v.Name == "Cheat" then
+                                v:Destroy()
+                            end
+                        end
                         task.wait()
                         if IsFarming() == false then
                             return
