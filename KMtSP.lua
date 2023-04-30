@@ -207,6 +207,7 @@ EggsTab:AddToggle(
                         else
                             game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open1", {})
                         end
+                        wait(0.1)
                     end
                 end
                 if EggPrice[2] == "Gems" then
@@ -216,6 +217,7 @@ EggsTab:AddToggle(
                         else
                             game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open1", {})
                         end
+                        wait(0.1)
                     end
                 end
             end
