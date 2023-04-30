@@ -71,7 +71,7 @@ AutoTab:AddToggle(
                         return
                     end
                 end
-                workspace.Gravity = 0
+                workspace.Gravity = 100
                 game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 0
                 game.Players.LocalPlayer.Character.Humanoid.JumpPower = 0
                 if not pcall(function()
@@ -87,7 +87,7 @@ AutoTab:AddToggle(
                                     if OrionLib.Flags['safemode-main-toggle'].Value == false then 
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Enemy.HumanoidRootPart.CFrame + Enemy.HumanoidRootPart.CFrame.LookVector * 10
                                     else
-                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Enemy.HumanoidRootPart.CFrame + Enemy.HumanoidRootPart.CFrame.LookVector * 3
+                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Enemy.HumanoidRootPart.CFrame + Enemy.HumanoidRootPart.CFrame.LookVector
                                     end
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position,
@@ -104,7 +104,6 @@ AutoTab:AddToggle(
                 end) then
                     wait()
                 end
-                wait(5)
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.SpawnLocation.CFrame
             end
         end
@@ -203,7 +202,7 @@ EggsTab:AddToggle(
                 end
                 if EggPrice[2] == "Coins" then
                     if game:GetService("Players").LocalPlayer.leaderstats["\240\159\146\176Coin"].Value > EggPrice[1] then
-                        if game:GetService("Players").LocalPlayer.leaderstats["\240\159\146\176Coin"].Value * 3 > EggPrice[1] then
+                        if game:GetService("Players").LocalPlayer.leaderstats["\240\159\146\176Coin"].Value / 3 > EggPrice[1] then
                             game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open3", {})
                         else
                             game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open1", {})
@@ -212,7 +211,7 @@ EggsTab:AddToggle(
                 end
                 if EggPrice[2] == "Gems" then
                     if game:GetService("Players").LocalPlayer.stats.Gem.Value > EggPrice[1] then
-                        if game:GetService("Players").LocalPlayer.stats.Gem.Value * 3 > EggPrice[1] then
+                        if game:GetService("Players").LocalPlayer.stats.Gem.Value / 3 > EggPrice[1] then
                             game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open3", {})
                         else
                             game:GetService("ReplicatedStorage"):WaitForChild("Remote"):WaitForChild("Hatch"):WaitForChild("EggHatch"):InvokeServer(Egg[1], "Open1", {})
