@@ -120,7 +120,9 @@ AutoTab:AddToggle(
                                         break
                                     end
                                     if Enemy.Humanoid.FloorMaterial.Name == 'Air' then
-                                        break
+                                        if #Wave.Enemy:GetChildren() > 1 then
+                                            break
+                                        end
                                     end
                                 end
                                 if not pcall(function()
@@ -128,10 +130,11 @@ AutoTab:AddToggle(
                                     game.Players.LocalPlayer.Character.Humanoid.AutoRotate = false
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyLinearVelocity = Vector3.zero
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.AssemblyAngularVelocity = Vector3.zero
-                                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Enemy.LeftFoot.CFrame.x, Enemy.LeftFoot.CFrame.y - 3, Enemy.LeftFoot.CFrame.z)
+                                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Enemy.LeftFoot.CFrame.x, Enemy.LeftFoot.CFrame.y - 5, Enemy.LeftFoot.CFrame.z + 3)
                                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position,
-                                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position + Vector3.yAxis
+                                        Enemy.LeftFoot.CFrame.Position
+                                        -- game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.Position + Vector3.yAxis
                                     )
                                 end) then
                                     break
