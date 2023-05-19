@@ -55,13 +55,9 @@ G2L["4"]["Text"] = [[Toggle]];
 G2L["5"] = Instance.new("UICorner", G2L["4"]);
 
 G2L["4"].MouseButton1Click:Connect(function()
-	if Hidden then
-        if Hidden == true then
-            Unhide()
-        elseif Hidden == false then
-            Hide()
-        end
-    end
+	keypress(Enum.KeyCode.RightShift)
+	task.wait(0.05)
+	keyrelease(Enum.KeyCode.RightShift)
 end)
 
 return G2L["1"], require;
