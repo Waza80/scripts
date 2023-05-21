@@ -10,6 +10,7 @@
 -- Instances: 6 | Scripts: 1 | Modules: 0
 local G2L = {};
 local CoreGui = game:GetService("CoreGui");
+local Rayfield = game:GetObjects("rbxassetid://10804731440")[1];
 local VirtualUser = game:GetService('VirtualUser');
 VirtualUser:CaptureController();
 
@@ -55,9 +56,27 @@ G2L["4"]["Text"] = [[Toggle]];
 G2L["5"] = Instance.new("UICorner", G2L["4"]);
 
 G2L["4"].MouseButton1Click:Connect(function()
-	keypress(Enum.KeyCode.RightShift)
-	task.wait(0.05)
-	keyrelease(Enum.KeyCode.RightShift)
+    if gethui then
+        for _, Interface in ipairs(gethui():GetChildren()) do
+            if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
+                if Interface.Enabled == true then
+                    Interface.Enabled = false
+                else
+                    Interface.Enabled = true
+                end
+            end
+        end
+    else
+        for _, Interface in ipairs(CoreGui:GetChildren()) do
+            if Interface.Name == Rayfield.Name and Interface ~= Rayfield then
+                if Interface.Enabled == true then
+                    Interface.Enabled = false
+                else
+                    Interface.Enabled = true
+                end
+            end
+        end
+    end
 end)
 
 return G2L["1"], require;
