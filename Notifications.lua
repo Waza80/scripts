@@ -14,10 +14,11 @@ local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 
 -- functions
-function N:Notify(Text, ButtonText, NotificationTweenTime)
+function N:Notify(Text, ButtonText, NotificationTweenTime, WaitForClick)
     if Text == nil then return end
     ButtonText = ButtonText or "I understand"
     NotificationTweenTime = NotificationTweenTime or 0.5
+    WaitForClick = WaitForClick or false
 
     G2L1["1"] = Instance.new("ScreenGui", CoreGui);
     G2L1["1"]["Name"] = "Notification";
@@ -79,9 +80,12 @@ function N:Notify(Text, ButtonText, NotificationTweenTime)
     G2L1["9"] = Instance.new("BlurEffect", workspace.CurrentCamera);
     G2L1["9"]["Size"] = 0;
 
+    local Clicked = nil
+
     G2L1["6"].MouseButton1Click:Connect(function()
         G2L1["1"]:Destroy()
         G2L1["9"]:Destroy()
+        Clicked = true
     end)
 
     TweenService:Create(G2L1["2"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
@@ -91,9 +95,9 @@ function N:Notify(Text, ButtonText, NotificationTweenTime)
     TweenService:Create(G2L1["6"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
     TweenService:Create(G2L1["9"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {Size = 10}):Play()
 
-    return {
-        [1] = G2L1["1"]
-    }
+    if WaitForClick then
+        repeat task.wait() until Clicked == true
+    end
 end
 
 function N:Prompt(Text, YesText, NoText, PromptTweenTime)
@@ -203,17 +207,15 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
     TweenService:Create(G2L2["11"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {Size = 10}):Play()
 
     repeat task.wait() until Chosen ~= nil
-    return {
-        [1] = G2L2["1"],
-        Result = Chosen
-    }
+    return Chosen
 end
 
-function N:Info(Title, Description, ButtonText, InfoTweenTime)
+function N:Info(Title, Description, ButtonText, InfoTweenTime, WaitForClick)
     if Title == nil then return end
     if Description == nil then return end
     ButtonText = ButtonText or "Okay"
     InfoTweenTime = InfoTweenTime or 0.5
+    WaitForClick = WaitForClick or false
 
     G2L3["1"] = Instance.new("ScreenGui", CoreGui);
     G2L3["1"]["Name"] = "Info"
@@ -288,9 +290,12 @@ function N:Info(Title, Description, ButtonText, InfoTweenTime)
     G2L2["10"] = Instance.new("BlurEffect", workspace.CurrentCamera);
     G2L2["10"]["Size"] = 0;
 
+    local Clicked = nil
+
     G2L3["6"].MouseButton1Click:Connect(function()
         G2L3["1"]:Destroy()
         G2L3["10"]:Destroy()
+        Clicked = true
     end)
 
     TweenService:Create(G2L3["2"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
@@ -302,9 +307,9 @@ function N:Info(Title, Description, ButtonText, InfoTweenTime)
     TweenService:Create(G2L3["9"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
     TweenService:Create(G2L3["10"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {Size = 10}):Play()
 
-    return {
-        [1] = G2L3["1"]
-    }
+    if WaitForClick then
+        repeat task.wait() until Clicked == true
+    end
 end
 
 return N;
