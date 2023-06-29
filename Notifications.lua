@@ -287,8 +287,8 @@ function N:Info(Title, Description, ButtonText, InfoTweenTime, WaitForClick)
     G2L3["9"]["BackgroundTransparency"] = 1;
     G2L3["9"]["Position"] = UDim2.new(0.5, 0, 0.15, 0);
 
-    G2L2["10"] = Instance.new("BlurEffect", workspace.CurrentCamera);
-    G2L2["10"]["Size"] = 0;
+    G2L3["10"] = Instance.new("BlurEffect", workspace.CurrentCamera);
+    G2L3["10"]["Size"] = 0;
 
     local Clicked = nil
 
