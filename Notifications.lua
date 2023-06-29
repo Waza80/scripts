@@ -90,6 +90,10 @@ function N:Notify(Text, ButtonText, NotificationTweenTime)
     TweenService:Create(G2L1["5"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
     TweenService:Create(G2L1["6"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
     TweenService:Create(G2L1["9"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {Size = 10}):Play()
+
+    return {
+        [1] = G2L1["1"]
+    }
 end
 
 function N:Prompt(Text, YesText, NoText, PromptTweenTime)
@@ -199,7 +203,10 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
     TweenService:Create(G2L2["11"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {Size = 10}):Play()
 
     repeat task.wait() until Chosen ~= nil
-    return Chosen
+    return {
+        [1] = G2L2["1"],
+        Result = Chosen
+    }
 end
 
 function N:Info(Title, Description, ButtonText, InfoTweenTime)
@@ -294,6 +301,10 @@ function N:Info(Title, Description, ButtonText, InfoTweenTime)
     TweenService:Create(G2L3["6"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
     TweenService:Create(G2L3["9"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
     TweenService:Create(G2L3["10"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {Size = 10}):Play()
+
+    return {
+        [1] = G2L3["1"]
+    }
 end
 
 return N;
