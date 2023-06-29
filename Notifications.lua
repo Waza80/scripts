@@ -7,7 +7,7 @@
 ]]
 
 -- variables
-local G2L1, G2L2, N = {}, {}, {}
+local G2L1, G2L2, G2L3, N = {}, {}, {}, {}
 
 -- services
 local CoreGui = game:GetService("CoreGui")
@@ -16,7 +16,7 @@ local TweenService = game:GetService("TweenService")
 -- functions
 function N:Notify(Text, ButtonText, NotificationTweenTime)
     if Text == nil then return end
-    ButtonText = ButtonText or "Understood"
+    ButtonText = ButtonText or "I understand"
     NotificationTweenTime = NotificationTweenTime or 0.5
 
     G2L1["1"] = Instance.new("ScreenGui", CoreGui);
@@ -54,7 +54,7 @@ function N:Notify(Text, ButtonText, NotificationTweenTime)
     G2L1["5"]["Size"] = UDim2.new(0, 300, 0, 100);
     G2L1["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
     G2L1["5"]["Text"] = Text;
-    G2L1["5"]["Position"] = UDim2.new(0.5, 0, 0.3499999940395355, 0);
+    G2L1["5"]["Position"] = UDim2.new(0.5, 0, 0.35, 0);
     G2L1["5"]["BackgroundTransparency"] = 1;
     G2L1["5"]["TextTransparency"] = 1;
 
@@ -86,7 +86,6 @@ function N:Notify(Text, ButtonText, NotificationTweenTime)
 
     TweenService:Create(G2L1["2"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
     TweenService:Create(G2L1["3"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
-    TweenService:Create(G2L1["5"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
     TweenService:Create(G2L1["6"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
     TweenService:Create(G2L1["5"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
     TweenService:Create(G2L1["6"], TweenInfo.new(NotificationTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
@@ -134,7 +133,7 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
     G2L2["5"]["Size"] = UDim2.new(0, 400, 0, 100);
     G2L2["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
     G2L2["5"]["Text"] = Text;
-    G2L2["5"]["Position"] = UDim2.new(0.5, 0, 0.3499999940395355, 0);
+    G2L2["5"]["Position"] = UDim2.new(0.5, 0, 0.35, 0);
     G2L2["5"]["TextTransparency"] = 1;
     G2L2["5"]["BackgroundTransparency"] = 1;
 
@@ -149,7 +148,7 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
     G2L2["6"]["Size"] = UDim2.new(0, 200, 0, 50);
     G2L2["6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
     G2L2["6"]["Text"] = YesText;
-    G2L2["6"]["Position"] = UDim2.new(0.2619999945163727, 0, 0.762499988079071, 0);
+    G2L2["6"]["Position"] = UDim2.new(0.2625, 0, 0.7625, 0);
     G2L2["6"]["TextTransparency"] = 1;
     G2L2["6"]["BackgroundTransparency"] = 1;
 
@@ -168,7 +167,7 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
     G2L2["9"]["Size"] = UDim2.new(0, 200, 0, 50);
     G2L2["9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
     G2L2["9"]["Text"] = NoText;
-    G2L2["9"]["Position"] = UDim2.new(0.7329999804496765, 0, 0.762499988079071, 0);
+    G2L2["9"]["Position"] = UDim2.new(0.735, 0, 0.7625, 0);
     G2L2["9"]["TextTransparency"] = 1;
 
     G2L2["10"] = Instance.new("UICorner", G2L2["9"]);
@@ -192,7 +191,6 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
 
     TweenService:Create(G2L2["2"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
     TweenService:Create(G2L2["3"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
-    TweenService:Create(G2L2["5"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
     TweenService:Create(G2L2["6"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
     TweenService:Create(G2L2["9"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
     TweenService:Create(G2L2["5"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
@@ -202,6 +200,100 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
 
     repeat task.wait() until Chosen ~= nil
     return Chosen
+end
+
+function N:Info(Title, Description, ButtonText, InfoTweenTime)
+    if Title == nil then return end
+    if Description == nil then return end
+    ButtonText = ButtonText or "Okay"
+    InfoTweenTime = InfoTweenTime or 0.5
+
+    G2L3["1"] = Instance.new("ScreenGui", CoreGui);
+    G2L3["1"]["Name"] = "Info"
+    G2L3["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
+
+    G2L3["2"] = Instance.new("Frame", G2L3["1"]);
+    G2L3["2"]["BorderSizePixel"] = 0;
+    G2L3["2"]["BackgroundColor3"] = Color3.fromRGB(67, 67, 67);
+    G2L3["2"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+    G2L3["2"]["Size"] = UDim2.new(0, 350, 0, 200);
+    G2L3["2"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+    G2L3["2"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+
+    G2L3["3"] = Instance.new("Frame", G2L3["2"]);
+    G2L3["3"]["BorderSizePixel"] = 0;
+    G2L3["3"]["BackgroundColor3"] = Color3.fromRGB(34, 34, 34);
+    G2L3["3"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+    G2L3["3"]["Size"] = UDim2.new(0, 340, 0, 190);
+    G2L3["3"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+    G2L3["3"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
+
+    G2L3["4"] = Instance.new("UICorner", G2L3["3"]);
+
+    G2L3["5"] = Instance.new("TextLabel", G2L3["2"]);
+    G2L3["5"]["TextWrapped"] = true;
+    G2L3["5"]["BorderSizePixel"] = 0;
+    G2L3["5"]["TextScaled"] = true;
+    G2L3["5"]["BackgroundColor3"] = Color3.fromRGB(34, 34, 34);
+    G2L3["5"]["FontFace"] = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+    G2L3["5"]["TextColor3"] = Color3.fromRGB(236, 236, 236);
+    G2L3["5"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+    G2L3["5"]["Size"] = UDim2.new(0, 300, 0, 65);
+    G2L3["5"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+    G2L3["5"]["Text"] = Description;
+    G2L3["5"]["Position"] = UDim2.new(0.5, 0, 0.4, 0);
+    G2L3["5"]["BackgroundTransparency"] = 1;
+    G2L3["5"]["TextTransparency"] = 1;
+
+    G2L3["6"] = Instance.new("TextButton", G2L3["2"]);
+    G2L3["6"]["TextWrapped"] = true;
+    G2L3["6"]["BorderSizePixel"] = 0;
+    G2L3["6"]["TextScaled"] = true;
+    G2L3["6"]["BackgroundColor3"] = Color3.fromRGB(236, 236, 236);
+    G2L3["6"]["FontFace"] = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+    G2L3["6"]["TextColor3"] = Color3.fromRGB(0, 0, 0);
+    G2L3["6"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+    G2L3["6"]["Size"] = UDim2.new(0, 300, 0, 50);
+    G2L3["6"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+    G2L3["6"]["Text"] = ButtonText;
+    G2L3["6"]["TextTransparency"] = 1;
+    G2L3["6"]["Position"] = UDim2.new(0.5, 0, 0.75, 0);
+
+    G2L3["7"] = Instance.new("UICorner", G2L3["6"]);
+
+    G2L3["8"] = Instance.new("UICorner", G2L3["2"]);
+
+    G2L3["9"] = Instance.new("TextLabel", G2L3["2"]);
+    G2L3["9"]["TextWrapped"] = true;
+    G2L3["9"]["BorderSizePixel"] = 0;
+    G2L3["9"]["TextScaled"] = true;
+    G2L3["9"]["BackgroundColor3"] = Color3.fromRGB(34, 34, 34);
+    G2L3["9"]["FontFace"] = Font.new("rbxasset://fonts/families/HighwayGothic.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+    G2L3["9"]["TextColor3"] = Color3.fromRGB(236, 236, 236);
+    G2L3["9"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+    G2L3["9"]["Size"] = UDim2.new(0, 300, 0, 50);
+    G2L3["9"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+    G2L3["9"]["Text"] = Title;
+    G2L3["9"]["TextTransparency"] = 1;
+    G2L3["9"]["BackgroundTransparency"] = 1;
+    G2L3["9"]["Position"] = UDim2.new(0.5, 0, 0.15, 0);
+
+    G2L2["10"] = Instance.new("BlurEffect", workspace.CurrentCamera);
+    G2L2["10"]["Size"] = 0;
+
+    G2L3["6"].MouseButton1Click:Connect(function()
+        G2L3["1"]:Destroy()
+        G2L3["10"]:Destroy()
+    end)
+
+    TweenService:Create(G2L3["2"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
+    TweenService:Create(G2L3["3"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
+    TweenService:Create(G2L3["6"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
+    TweenService:Create(G2L3["9"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
+    TweenService:Create(G2L3["5"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
+    TweenService:Create(G2L3["6"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
+    TweenService:Create(G2L3["9"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
+    TweenService:Create(G2L3["10"], TweenInfo.new(InfoTweenTime, Enum.EasingStyle.Linear), {Size = 10}):Play()
 end
 
 return N;
