@@ -334,6 +334,4 @@ function N:Info(Title, Description, ButtonText, InfoTweenTime, WaitForClick)
     end
 end
 
-
-N:Prompt("gay")
 return N;
