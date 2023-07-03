@@ -180,21 +180,42 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
 
     G2L2["10"] = Instance.new("UICorner", G2L2["9"]);
 
-    G2L2["11"] = Instance.new("BlurEffect", workspace.CurrentCamera);
-    G2L2["11"]["Size"] = 0;
+    G2L2["11"] = Instance.new("TextButton", G2L2["2"]);
+    G2L2["11"]["TextWrapped"] = true;
+    G2L2["11"]["BorderSizePixel"] = 0;
+    G2L2["11"]["TextScaled"] = true;
+    G2L2["11"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+    G2L2["11"]["FontFace"] = Font.new([[rbxasset://fonts/families/FredokaOne.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+    G2L2["11"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+    G2L2["11"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
+    G2L2["11"]["Size"] = UDim2.new(0, 175, 0, 25);
+    G2L2["11"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
+    G2L2["11"]["Text"] = "Click to dismiss";
+    G2L2["11"]["BackgroundTransparency"] = 1;
+    G2L2["11"]["TextTransparency"] = 1;
+    G2L2["11"]["Position"] = UDim2.new(0.5, 0, 1.05, 0);
 
-    local Chosen = nil
+    G2L2["12"] = Instance.new("BlurEffect", workspace.CurrentCamera);
+    G2L2["12"]["Size"] = 0;
+
+    local Chosen = "no choice"
 
     G2L2["6"].MouseButton1Click:Connect(function()
         G2L2["1"]:Destroy()
-        G2L2["11"]:Destroy()
+        G2L2["12"]:Destroy()
         Chosen = true
     end)
 
     G2L2["9"].MouseButton1Click:Connect(function()
         G2L2["1"]:Destroy()
-        G2L2["11"]:Destroy()
+        G2L2["12"]:Destroy()
         Chosen = false
+    end)
+
+    G2L2["11"].MouseButton1Click:Connect(function()
+        G2L2["1"]:Destroy()
+        G2L2["12"]:Destroy()
+        Chosen = nil
     end)
 
     TweenService:Create(G2L2["2"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {BackgroundTransparency = 0}):Play()
@@ -204,9 +225,10 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
     TweenService:Create(G2L2["5"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
     TweenService:Create(G2L2["6"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
     TweenService:Create(G2L2["9"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
-    TweenService:Create(G2L2["11"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {Size = 10}):Play()
+    TweenService:Create(G2L2["11"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {TextTransparency = 0}):Play()
+    TweenService:Create(G2L2["12"], TweenInfo.new(PromptTweenTime, Enum.EasingStyle.Linear), {Size = 10}):Play()
 
-    repeat task.wait() until Chosen ~= nil
+    repeat task.wait() until Chosen ~= "no choice"
     return Chosen
 end
 
@@ -287,8 +309,8 @@ function N:Info(Title, Description, ButtonText, InfoTweenTime, WaitForClick)
     G2L3["9"]["BackgroundTransparency"] = 1;
     G2L3["9"]["Position"] = UDim2.new(0.5, 0, 0.15, 0);
 
-    G2L3["10"] = Instance.new("BlurEffect", workspace.CurrentCamera);
-    G2L3["10"]["Size"] = 0;
+    G2L2["10"] = Instance.new("BlurEffect", workspace.CurrentCamera);
+    G2L2["10"]["Size"] = 0;
 
     local Clicked = nil
 
@@ -312,4 +334,6 @@ function N:Info(Title, Description, ButtonText, InfoTweenTime, WaitForClick)
     end
 end
 
+
+N:Prompt("gay")
 return N;
