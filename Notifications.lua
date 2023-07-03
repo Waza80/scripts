@@ -193,6 +193,7 @@ function N:Prompt(Text, YesText, NoText, PromptTweenTime)
     G2L2["11"]["Text"] = "Click to dismiss";
     G2L2["11"]["BackgroundTransparency"] = 1;
     G2L2["11"]["TextTransparency"] = 1;
+    G2L2["11"]["TextStrokeTransparency"] = 0.6
     G2L2["11"]["Position"] = UDim2.new(0.5, 0, 1.05, 0);
 
     G2L2["12"] = Instance.new("BlurEffect", workspace.CurrentCamera);
