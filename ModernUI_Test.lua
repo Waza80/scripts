@@ -1,4 +1,4 @@
-local Lib = gg
+local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Waza80/scripts/main/ModernLib.lua"))()
 
 local Win = Lib:CreateWindow({Rainbow = true, ResetTabPosition = false, MultipleTabs = true, ClosePosition = "center"})
 
