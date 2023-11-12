@@ -1,6 +1,6 @@
 local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Waza80/scripts/main/ModernLib.lua"))()
 
-local Win = Lib:CreateWindow({Rainbow = true, ResetTabPosition = false, MultipleTabs = true, ClosePosition = "center"})
+local Win = Lib:CreateWindow({Rainbow = true, ResetTabPosition = true, MultipleTabs = false, ClosePosition = "left"})
 
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
