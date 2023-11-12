@@ -2,6 +2,11 @@ local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Waza80/sc
 
 local Win = Lib:CreateWindow({Rainbow = true, ResetTabPosition = false, MultipleTabs = true, ClosePosition = "center"})
 
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
 Win:CreateTab("Main")
 Win:CreateTab("Test")
 local U = Win:CreateTab("Farm")
