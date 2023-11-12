@@ -413,3 +413,5 @@ function Lib:CreateWindow(T)
 	
 	return WindowItem
 end
+
+return Lib
