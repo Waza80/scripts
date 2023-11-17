@@ -1,22 +1,15 @@
 local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Waza80/scripts/main/ModernLib.lua"))()
 
-local Win = Lib:CreateWindow({Rainbow = true, ResetTabPosition = true, MultipleTabs = false, ClosePosition = "left"})
-
-local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-
 Win:CreateTab("Main")
 Win:CreateTab("Test")
 local U = Win:CreateTab("Farm")
-	
+
 --[[
 for i = 1, 100 do
 	Win:CreateTab("Test")
 end
 ]]
-	
+
 U:CreateSection("Test1")
 
 U:CreateButton({
@@ -51,8 +44,8 @@ U:CreateSection("Test2")
 
 local S = U:CreateSlider({
 	Name = "Change Value",
-	Min = 0,
-	Max = 10000000000,
+	Min = 16,
+	Max = 100,
 	Default = 35,
 	Callback = function(Value)
 		print("Slider set to", Value)
@@ -129,3 +122,12 @@ local Le = U:CreateInput({
 		print("Input's value is", Value)
 	end,
 })
+
+U:CreateButton({
+	Name = "Print Input Value",
+	Callback = function()
+		print("Input's value is", Le.Value)
+	end,
+})
+
+U:CreateParagraph("This is a paragraph!", "Hey!\nI'm a working paragraph.\nLook how I adapt to a definite size!")
