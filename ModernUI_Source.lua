@@ -9,11 +9,26 @@
 
 -- Instances: 99 | Scripts: 0 | Modules: 0
 local G2L = {};
+local status, response = pcall(function() return game:GetService("CoreGui") end)
+local CoreGui = nil; if status == true then CoreGui = response end
 
 -- StarterGui.Modern V2
 G2L["1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
 G2L["1"]["Name"] = [[Modern V2]];
 G2L["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
+
+-- gethui handling
+pcall(function()
+	if getgenv().gethui then
+		G2L["1"]["Parent"] = gethui()
+	elseif CoreGui then
+		if CoreGui:FindFirstChild("RobloxGui") then
+			G2L["1"]["Parent"] = CoreGui.RobloxGui
+		else
+			G2L["1"]["Parent"] = CoreGui
+		end
+	end
+end)
 
 -- StarterGui.Modern V2.Templates
 G2L["2"] = Instance.new("Frame", G2L["1"]);
