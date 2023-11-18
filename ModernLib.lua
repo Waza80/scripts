@@ -31,7 +31,7 @@ local status, response = pcall(function()
 	end
 end)
 
-if status == true then 
+if status == true then
 	ModernLib = response
 end
 
