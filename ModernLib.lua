@@ -2,7 +2,7 @@
 
 local Players = game:GetService("Players")
 local status, response = pcall(function() return game:GetService("CoreGui") end)
-local CoreGui = nil; if status == true then local CoreGui = response end
+local CoreGui = nil; if status == true then CoreGui = response end
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -18,15 +18,15 @@ local Lib = {}
 
 local ModernLib = nil
 local status, response = pcall(function()
-	if gethui then
+	if getgenv().gethui then
 		if gethui():FindFirstChild("ModernLibTemplate_12052193") then
 			return gethui():FindFirstChild("ModernLibTemplate_12052193")
 		end
 	elseif CoreGui then
-		if CoreGui.RobloxGui:FindFIrstChild("ModernLibTemplate_12052193") then
-			return CoreGui.RobloxGui:FindFIrstChild("ModernLibTemplate_12052193")
-		elseif CoreGui:FindFIrstChild("ModernLibTemplate_12052193") then
-			return CoreGui:FindFIrstChild("ModernLibTemplate_12052193")
+		if CoreGui:FindFIrstChild("RobloxGui"):FindFirstChild("ModernLibTemplate_12052193") then
+			return CoreGui.RobloxGui:FindFirstChild("ModernLibTemplate_12052193")
+		elseif CoreGui:FindFirstChild("ModernLibTemplate_12052193") then
+			return CoreGui:FindFirstChild("ModernLibTemplate_12052193")
 		end
 	end
 end)
