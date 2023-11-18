@@ -38,7 +38,7 @@ end
 if not ModernLib and LocalPlayer.PlayerGui:FindFirstChild("ModernLibTemplate_12052193") then
 	ModernLib = LocalPlayer.PlayerGui:FindFirstChild("ModernLibTemplate_12052193")
 else
-	ModernLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Waza80/scripts/main/ModernUI_Source.lua"))()
+	ModernLib = script.Parent
 end
 
 ModernLib.Enabled = false
@@ -317,12 +317,26 @@ function Lib:CreateWindow(T)
 			Toggle.ClickPart.MouseButton1Click:Connect(function() 
 				ToggleIsEnabled = not ToggleIsEnabled
 				ToggleItem.Value = ToggleIsEnabled
-				T["Callback"](ToggleItem.Value) 
+				
+				if ToggleIsEnabled == true then
+					TweenService:Create(Toggle.Toggle, TweenInfo.new(0.35), {BackgroundColor3 = Color3.fromRGB(0, 192, 114)}):Play()
+				else
+					TweenService:Create(Toggle.Toggle, TweenInfo.new(0.35), {BackgroundColor3 = Color3.fromRGB(33, 33, 33)}):Play()
+				end
+				
+				T["Callback"](ToggleIsEnabled)
 			end)
 
 			function ToggleItem:Set(Status)
-				Toggle.IsEnabled.Value = Status
+				ToggleIsEnabled = Status
 				ToggleItem.Value = Status
+				
+				if ToggleIsEnabled == true then
+					TweenService:Create(Toggle.Toggle, TweenInfo.new(0.35), {BackgroundColor3 = Color3.fromRGB(0, 192, 114)}):Play()
+				else
+					TweenService:Create(Toggle.Toggle, TweenInfo.new(0.35), {BackgroundColor3 = Color3.fromRGB(33, 33, 33)}):Play()
+				end
+				
 				T["Callback"](Status)
 			end
 
@@ -410,11 +424,13 @@ function Lib:CreateWindow(T)
 
 			Slider.Precision.Plus.MouseButton1Click:Connect(function()
 				Slider.TextBox.Text = tostring(math.ceil(tonumber(Slider.TextBox.Text) + 1))
+				UpdateSlider()
 				
 			end)
 
 			Slider.Precision.Minus.MouseButton1Click:Connect(function()
 				Slider.TextBox.Text = tostring(math.ceil(tonumber(Slider.TextBox.Text) - 1))
+				UpdateSlider()
 			end)
 
 			function SliderItem:Set(NewValue)
