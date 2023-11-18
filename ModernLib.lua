@@ -38,7 +38,7 @@ end
 if not ModernLib and LocalPlayer.PlayerGui:FindFirstChild("ModernLibTemplate_12052193") then
 	ModernLib = LocalPlayer.PlayerGui:FindFirstChild("ModernLibTemplate_12052193")
 else
-	ModernLib = script.Parent
+	ModernLib = loadstring(game:HttpGet("https://github.com/Waza80/scripts/raw/main/ModernUI_Source.lua"))()
 end
 
 ModernLib.Enabled = false
