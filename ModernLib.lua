@@ -68,10 +68,10 @@ function Lib:CreateWindow(T)
 		ScriptNameHighlight.ScriptName.Size = 	UDim2.new(0, ScriptNameHighlight.ScriptName.TextBounds.X, 0, ScriptNameHighlight.ScriptName.TextBounds.Y)
 		ScriptNameHighlight.ScriptName.TextTruncate = Enum.TextTruncate.AtEnd	
 	end
-	
+	 
 	TabContainer:GetPropertyChangedSignal("AbsoluteCanvasSize"):Connect(function()
 		-- if script.Parent.AbsoluteCanvasSize.X == 0 then script.Parent.Visible = false; return else script.Parent.Visible = true end
-		if workspace.CurrentCamera.ViewportSize.X - 50 > TabContainer.AbsoluteCanvasSize.X then
+		if Camera.ViewportSize.X - 50 > TabContainer.AbsoluteCanvasSize.X then
 			TabContainer.Size = UDim2.new(0, TabContainer.AbsoluteCanvasSize.X, 0, 30)
 		else
 			TabContainer.Size = UDim2.new(0, Camera.ViewportSize.X - 50, 0, 30)
@@ -154,7 +154,7 @@ function Lib:CreateWindow(T)
 				TweenService:Create(TabContainer, TweenInfo.new(0.2), {Size = UDim2.new(0, 0, 0, 30)}):Play()
 				TweenService:Create(TabSelector.Container.UIListLayout, TweenInfo.new(0.2), {Padding = UDim.new(0, 0)}):Play()
 				TweenService:Create(TabSelector.Container.CloseButton.Icon, TweenInfo.new(0.2), {Rotation = 45}):Play()
-				
+
 				if T["Name"] ~= "" then
 					TweenService:Create(ScriptNameHighlight, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 0, 0, ScriptNameHighlight.ScriptName.TextBounds.Y + 4)}):Play()
 					TweenService:Create(ScriptNameHighlight.ScriptName, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 0, 0, ScriptNameHighlight.ScriptName.TextBounds.Y)}):Play()
@@ -162,11 +162,18 @@ function Lib:CreateWindow(T)
 					OldTextBounds = ScriptNameHighlight.ScriptName.TextBounds
 				end
 			elseif CloseButtonClosed == false then
+				if Camera.ViewportSize.X - 50 > TabContainer.AbsoluteCanvasSize.X then
+					TweenService:Create(TabContainer, TweenInfo.new(0.2), {Size = UDim2.new(0, TabContainer.AbsoluteCanvasSize.X, 0, 30)}):Play()
+
+				else
+					TweenService:Create(TabContainer, TweenInfo.new(0.2), {Size = UDim2.new(0, Camera.ViewportSize.X - 50, 0, 30)}):Play()
+
+				end
+				
 				TweenService:Create(TabSelector, TweenInfo.new(0.2), {AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, TabSelector.AbsolutePosition.Y)}):Play()
-				TweenService:Create(TabContainer, TweenInfo.new(0.2), {Size = UDim2.new(0, TabContainer.AbsoluteCanvasSize.X, 0, 30)}):Play()
 				TweenService:Create(TabSelector.Container.UIListLayout, TweenInfo.new(0.2), {Padding = UDim.new(0, 5)}):Play()
 				TweenService:Create(TabSelector.Container.CloseButton.Icon, TweenInfo.new(0.2), {Rotation = 0}):Play()
-				
+
 				if T["Name"] ~= "" then
 					TweenService:Create(ScriptNameHighlight, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, OldTextBounds.X + 8, 0, OldTextBounds.Y + 4)}):Play()
 					TweenService:Create(ScriptNameHighlight.ScriptName, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, OldTextBounds.X, 0, OldTextBounds.Y)}):Play()
@@ -177,6 +184,10 @@ function Lib:CreateWindow(T)
 			task.wait(0.2)
 			CloseButtonOnCooldown = false
 		end)
+	end
+
+	function WindowItem:Destroy()
+		Main:Destroy()
 	end
 	
 	function WindowItem:CreateTab(Name)
@@ -365,10 +376,12 @@ function Lib:CreateWindow(T)
 			T["Name"] = T["Name"] or "Unnamed"
 			T["Callback"] = T["Callback"] or nil
 			T["Default"] = T["Default"] or T["Min"]
+			T["Increment"] = T["Increment"] or 1
 
 			local SliderItem = T
 			local OldSliderValue = ""
 			local MovingSlider = false
+			local ValueIncrement = tostring(#(string.match(T["Increment"], "%.%d+")) or "")
 
 			local Slider = Templates.SliderTemplate:Clone()
 			Slider.Parent = Tab.Container
@@ -378,14 +391,29 @@ function Lib:CreateWindow(T)
 			Slider.Slider.Progression.Size = UDim2.new((T["Default"] - T["Min"]) / (T["Max"] - T["Min"]), 0, 1, 0)
 			Slider.TextBox.Text = T["Default"]
 			
+			local GetClosestValue = function(Value)
+				local Inc_N = math.floor((Value - T["Min"]) / T["Increment"])
+				local LowerValue = T["Min"] + Inc_N * T["Increment"]
+				local UpperValue = LowerValue + T["Increment"]
+				
+				if Value - LowerValue < UpperValue - Value then
+					return LowerValue
+				else
+					return UpperValue
+				end
+			end
+
 			local UpdateSlider = function()
 				local FilteredString = ""
 				for i = 1, #Slider.TextBox.Text do
 					if i == 15 then break end
-					if string.find(Slider.TextBox.Text:sub(i, i), "%d") then
+					if string.gmatch(Slider.TextBox.Text:sub(i, i), "(%d|%.)") then
 						FilteredString = FilteredString .. Slider.TextBox.Text:sub(i, i)
 					end
 				end
+				
+				if FilteredString ~= "" then FilteredString = GetClosestValue(tonumber(FilteredString)) end
+				FilteredString = string.format("%." .. ValueIncrement .. "f", FilteredString)
 				
 				local Percentage = math.clamp((tonumber(FilteredString) - T["Min"]) / (T["Max"] - T["Min"]), 0, 1)
 				Slider.Slider.Progression.Size = UDim2.new(Percentage, 0, 1, 0)
@@ -394,7 +422,7 @@ function Lib:CreateWindow(T)
 				if T["Callback"] ~= nil then
 					if OldSliderValue ~= Slider.TextBox.Text then 
 						T["Callback"](Slider.TextBox.Text)
-						OldSliderValue = Slider.TextBox.Text 
+						OldSliderValue = Slider.TextBox.Text
 					end
 				end
 
@@ -434,20 +462,20 @@ function Lib:CreateWindow(T)
 				if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) then
 					if MovingSlider == true then
 						Slider.Slider.Progression.Size = UDim2.new(math.clamp((Input.Position.X - Slider.Slider.AbsolutePosition.X) / Slider.Slider.AbsoluteSize.X, 0, 1), 0, 1, 0)
-						Slider.TextBox.Text = tostring(math.ceil(T["Min"] + Slider.Slider.Progression.Size.X.Scale * (T["Max"] - T["Min"])))
+						Slider.TextBox.Text = tostring(GetClosestValue(T["Min"] + Slider.Slider.Progression.Size.X.Scale * (T["Max"] - T["Min"])))
 						UpdateSlider()
 					end
 				end
 			end)
 
 			Slider.Precision.Plus.MouseButton1Click:Connect(function()
-				Slider.TextBox.Text = tostring(math.ceil(tonumber(Slider.TextBox.Text) + 1))
+				Slider.TextBox.Text = tostring(GetClosestValue(tonumber(Slider.TextBox.Text) + T["Increment"]))
 				UpdateSlider()
 				
 			end)
 
 			Slider.Precision.Minus.MouseButton1Click:Connect(function()
-				Slider.TextBox.Text = tostring(math.ceil(tonumber(Slider.TextBox.Text) - 1))
+				Slider.TextBox.Text = tostring(GetClosestValue(tonumber(Slider.TextBox.Text) - T["Increment"]))
 				UpdateSlider()
 			end)
 
