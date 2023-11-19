@@ -63,11 +63,10 @@ function Lib:CreateWindow(T)
 	if T["Name"] == "" then
 		ScriptNameHighlight.Visible = false
 	else
-		ScriptNameHighlight.ScriptName:GetPropertyChangedSignal("Text"):Connect(function()
-			ScriptNameHighlight.Size = UDim2.new(0, ScriptNameHighlight.ScriptName.TextBounds.X + 8, 0, ScriptNameHighlight.ScriptName.TextBounds.Y + 4)
-		end)
-		
 		ScriptNameHighlight.ScriptName.Text = T["Name"]
+		ScriptNameHighlight.Size = UDim2.new(0, ScriptNameHighlight.ScriptName.TextBounds.X + 8, 0, ScriptNameHighlight.ScriptName.TextBounds.Y + 4)
+		ScriptNameHighlight.ScriptName.Size = 	UDim2.new(0, ScriptNameHighlight.ScriptName.TextBounds.X, 0, ScriptNameHighlight.ScriptName.TextBounds.Y)
+		ScriptNameHighlight.ScriptName.TextTruncate = Enum.TextTruncate.AtEnd	
 	end
 	
 	TabContainer:GetPropertyChangedSignal("AbsoluteCanvasSize"):Connect(function()
@@ -136,6 +135,7 @@ function Lib:CreateWindow(T)
 	if T["ShowCloseButton"] == false then
 		TabSelector.Container.CloseButton.Visible = false
 	else
+		local OldTextBounds = nil
 		local CloseButtonClosed = false
 		local CloseButtonOnCooldown = false
 
@@ -154,11 +154,24 @@ function Lib:CreateWindow(T)
 				TweenService:Create(TabContainer, TweenInfo.new(0.2), {Size = UDim2.new(0, 0, 0, 30)}):Play()
 				TweenService:Create(TabSelector.Container.UIListLayout, TweenInfo.new(0.2), {Padding = UDim.new(0, 0)}):Play()
 				TweenService:Create(TabSelector.Container.CloseButton.Icon, TweenInfo.new(0.2), {Rotation = 45}):Play()
+				
+				if T["Name"] ~= "" then
+					TweenService:Create(ScriptNameHighlight, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 0, 0, ScriptNameHighlight.ScriptName.TextBounds.Y + 4)}):Play()
+					TweenService:Create(ScriptNameHighlight.ScriptName, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, 0, 0, ScriptNameHighlight.ScriptName.TextBounds.Y)}):Play()
+					TweenService:Create(ScriptNameHighlight.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Thickness = 0}):Play()
+					OldTextBounds = ScriptNameHighlight.ScriptName.TextBounds
+				end
 			elseif CloseButtonClosed == false then
 				TweenService:Create(TabSelector, TweenInfo.new(0.2), {AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, TabSelector.AbsolutePosition.Y)}):Play()
 				TweenService:Create(TabContainer, TweenInfo.new(0.2), {Size = UDim2.new(0, TabContainer.AbsoluteCanvasSize.X, 0, 30)}):Play()
 				TweenService:Create(TabSelector.Container.UIListLayout, TweenInfo.new(0.2), {Padding = UDim.new(0, 5)}):Play()
 				TweenService:Create(TabSelector.Container.CloseButton.Icon, TweenInfo.new(0.2), {Rotation = 0}):Play()
+				
+				if T["Name"] ~= "" then
+					TweenService:Create(ScriptNameHighlight, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, OldTextBounds.X + 8, 0, OldTextBounds.Y + 4)}):Play()
+					TweenService:Create(ScriptNameHighlight.ScriptName, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Size = UDim2.new(0, OldTextBounds.X, 0, OldTextBounds.Y)}):Play()
+					TweenService:Create(ScriptNameHighlight.UIStroke, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {Thickness = 1}):Play()
+				end
 			end
 			CloseButtonOnCooldown = true
 			task.wait(0.2)
