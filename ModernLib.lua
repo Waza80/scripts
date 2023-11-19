@@ -381,7 +381,7 @@ function Lib:CreateWindow(T)
 			local SliderItem = T
 			local OldSliderValue = ""
 			local MovingSlider = false
-			local ValueIncrement = tostring(#(string.match(T["Increment"], "%.%d+")) or "")
+			local ValueIncrement = tostring(#(string.match(T["Increment"], "%.%d+") or ""))
 
 			local Slider = Templates.SliderTemplate:Clone()
 			Slider.Parent = Tab.Container
