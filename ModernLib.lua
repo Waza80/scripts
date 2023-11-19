@@ -3,7 +3,6 @@
 local Players = game:GetService("Players")
 local status, response = pcall(function() return game:GetService("CoreGui") end)
 local CoreGui = nil; if status == true then CoreGui = response end
-local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -14,39 +13,10 @@ local PlayerMouse = LocalPlayer:GetMouse()
 local Camera = workspace.CurrentCamera
 local Lib = {}
 
--- Tree --
-
-local ModernLib = nil
-local status, response = pcall(function()
-	if getgenv().gethui then
-		if gethui():FindFirstChild("ModernLibTemplate_12052193") then
-			return gethui():FindFirstChild("ModernLibTemplate_12052193")
-		end
-	elseif CoreGui then
-		if CoreGui:FindFIrstChild("RobloxGui"):FindFirstChild("ModernLibTemplate_12052193") then
-			return CoreGui.RobloxGui:FindFirstChild("ModernLibTemplate_12052193")
-		elseif CoreGui:FindFirstChild("ModernLibTemplate_12052193") then
-			return CoreGui:FindFirstChild("ModernLibTemplate_12052193")
-		end
-	end
-end)
-
-if status == true then
-	ModernLib = response
-end
-
-if not ModernLib and LocalPlayer.PlayerGui:FindFirstChild("ModernLibTemplate_12052193") then
-	ModernLib = LocalPlayer.PlayerGui:FindFirstChild("ModernLibTemplate_12052193")
-else
-	ModernLib = loadstring(game:HttpGet("https://github.com/Waza80/scripts/raw/main/ModernUI_Source.lua"))()
-end
-
-ModernLib.Enabled = false
-ModernLib.Name = "ModernLibTemplate_12052193"	
-
 -- Function Setup --
 
 function Lib:CreateWindow(T)
+	T["Name"] = T["Name"] or ""
 	T["SelectorTopDistance"] = T["SelectorTopDistance"] or 5
 	T["Rainbow"] = T["Rainbow"] or false
 	if T["ShowCloseButton"] == nil then T["ShowCloseButton"] = true end
@@ -58,12 +28,47 @@ function Lib:CreateWindow(T)
 	local SelectedTab = nil	
 	local TabLayout = 0
 	
-	local Main = ModernLib:Clone(); Main.Enabled = true; if Main:FindFirstChild("MainHandler") then Main:FindFirstChild("MainHandler"):Destroy() end; Main.Parent = ModernLib.Parent; Main.Name = "ModernLib"
+	local Main = nil
+	local status, response = pcall(function()
+		return loadstring(game:HttpGet("https://github.com/Waza80/scripts/raw/main/ModernUI_Source.lua"))()
+	end)
+
+	if status == true then
+		Main = response
+		pcall(function()
+			if getgenv().gethui then
+				Main.Parent = gethui()
+			elseif CoreGui then
+				if CoreGui:FindFirstChild("RobloxGui") then
+					Main.Parent = CoreGui.RobloxGui
+				else
+					Main.Parent = CoreGui
+				end
+			end
+		end)
+	else
+		Main = script.Parent:Clone()
+		if Main:FindFirstChild("MainHandler") then Main:FindFirstChild("MainHandler"):Destroy() end
+		Main.Parent = script.Parent.Parent
+		script.Parent.Enabled = false
+	end
+	
 	local Tabs = Main.Tabs
+	local ScriptNameHighlight = Main.ScriptNameHighlight
 	local TabSelector = Main.TabSelector
 	local TabContainer = TabSelector.Container.Tabs
 	local SelectedTabButton = nil
 	local Templates = Main.Templates
+	
+	if T["Name"] == "" then
+		ScriptNameHighlight.Visible = false
+	else
+		ScriptNameHighlight.ScriptName:GetPropertyChangedSignal("Text"):Connect(function()
+			ScriptNameHighlight.Size = UDim2.new(0, ScriptNameHighlight.ScriptName.TextBounds.X + 8, 0, ScriptNameHighlight.ScriptName.TextBounds.Y + 4)
+		end)
+		
+		ScriptNameHighlight.ScriptName.Text = T["Name"]
+	end
 	
 	TabContainer:GetPropertyChangedSignal("AbsoluteCanvasSize"):Connect(function()
 		-- if script.Parent.AbsoluteCanvasSize.X == 0 then script.Parent.Visible = false; return else script.Parent.Visible = true end
@@ -458,7 +463,7 @@ function Lib:CreateWindow(T)
 
 			Dropdown.ClickPart.MouseButton1Click:Connect(function()
 				DropdownIsOpened = not DropdownIsOpened
-				if DropdownIsOpened == true then
+				if DropdownIsOpened == false then
 					TweenService:Create(Dropdown.Arrow, TweenInfo.new(0.35), {Rotation = 270}):Play()
 					TweenService:Create(Dropdown.Options, TweenInfo.new(0.35), {Size = UDim2.new(1, -10, 0, 0)}):Play()
 				else
