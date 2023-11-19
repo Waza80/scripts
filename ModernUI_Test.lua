@@ -2,7 +2,7 @@ local HttpService = game:GetService("HttpService")
 
 local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Waza80/scripts/main/ModernLib.lua"))()
 
-local Win = Lib:CreateWindow({Rainbow = true, ResetTabPosition = true, MultipleTabs = true, ClosePosition = "left"})
+local Win = Lib:CreateWindow({Name = "New Epic Hub\nV2 by Waza80 - discord.gg/sex", Rainbow = true, ResetTabPosition = true, MultipleTabs = true, ClosePosition = "left"})
 
 Win:CreateTab("Main")
 Win:CreateTab("Test")
