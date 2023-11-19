@@ -65,10 +65,10 @@ function Lib:CreateWindow(T)
 	else
 		ScriptNameHighlight.ScriptName.Text = T["Name"]
 		ScriptNameHighlight.Size = UDim2.new(0, ScriptNameHighlight.ScriptName.TextBounds.X + 8, 0, ScriptNameHighlight.ScriptName.TextBounds.Y + 4)
-		ScriptNameHighlight.ScriptName.Size = 	UDim2.new(0, ScriptNameHighlight.ScriptName.TextBounds.X, 0, ScriptNameHighlight.ScriptName.TextBounds.Y)
+		ScriptNameHighlight.ScriptName.Size = 	UDim2.new(0, ScriptNameHighlight.ScriptName.TextBounds.X + 8, 0, ScriptNameHighlight.ScriptName.TextBounds.Y)
 		ScriptNameHighlight.ScriptName.TextTruncate = Enum.TextTruncate.AtEnd	
 	end
-	 
+	
 	TabContainer:GetPropertyChangedSignal("AbsoluteCanvasSize"):Connect(function()
 		-- if script.Parent.AbsoluteCanvasSize.X == 0 then script.Parent.Visible = false; return else script.Parent.Visible = true end
 		if Camera.ViewportSize.X - 50 > TabContainer.AbsoluteCanvasSize.X then
@@ -93,7 +93,9 @@ function Lib:CreateWindow(T)
 				TweenService:Create(TabButton.Label, TweenInfo.new(0.5), {TextColor3 = Color3.fromRGB(24, 24, 28)}):Play()
 				SelectedTabButton = TabButton
 				if Tab.Position == UDim2.new(0.5, 0, 0.5, 0) or T["ResetTabPosition"] == true then
-					Tab.Position = UDim2.new(0.5, math.random(-20, 20), 0.5, math.random(-20, 20))
+					if T["MultipleTabs"] == false then
+						Tab.Position = UDim2.new(0.5, math.random(-20, 20), 0.5, math.random(-20, 20))
+					end
 				end
 				Tab.Visible = true
 				TabButton.IsOpened.Value = true
@@ -107,7 +109,9 @@ function Lib:CreateWindow(T)
 					TabButton.IsOpened.Value = true
 					Tab.Visible = true
 					if Tab.Position == UDim2.new(0.5, 0, 0.5, 0) or T["ResetTabPosition"] == true then
-						Tab.Position = UDim2.new(0.5, math.random(-20, 20), 0.5, math.random(-20, 20))
+						if T["MultipleTabs"] == false then
+							Tab.Position = UDim2.new(0.5, math.random(-20, 20), 0.5, math.random(-20, 20))
+						end
 					end
 					TweenService:Create(TabButton, TweenInfo.new(0.5), {BackgroundTransparency = 0.2}):Play()
 					TweenService:Create(TabButton.Label, TweenInfo.new(0.5), {TextColor3 = Color3.fromRGB(24, 24, 28)}):Play()
@@ -336,13 +340,20 @@ function Lib:CreateWindow(T)
 
 			local ToggleItem = T
 			local ToggleIsEnabled = T["Value"]
-
+			
 			local Toggle = Templates.ToggleTemplate:Clone()
 			Toggle.Parent = Tab.Container
 			Toggle.Name = "Toggle"
 			Toggle.LayoutOrder = TabItemLayout; TabItemLayout = TabItemLayout + 1
 			Toggle.Title.Text = T["Name"]
-
+			
+			if ToggleIsEnabled == true then
+				TweenService:Create(Toggle.Toggle, TweenInfo.new(0.35), {BackgroundColor3 = Color3.fromRGB(0, 192, 114)}):Play()
+			else
+				TweenService:Create(Toggle.Toggle, TweenInfo.new(0.35), {BackgroundColor3 = Color3.fromRGB(33, 33, 33)}):Play()
+			end
+			T["Callback"](ToggleIsEnabled)
+			
 			Toggle.ClickPart.MouseButton1Click:Connect(function() 
 				ToggleIsEnabled = not ToggleIsEnabled
 				ToggleItem.Value = ToggleIsEnabled
