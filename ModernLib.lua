@@ -27,6 +27,7 @@ function Lib:CreateWindow(T)
 	local WindowItem = {}
 	local SelectedTab = nil	
 	local TabLayout = 0
+	local IsDragging = false
 	
 	local Main = nil
 	local status, response = pcall(function()
@@ -207,7 +208,9 @@ function Lib:CreateWindow(T)
 		Tab.Name = Name .. RandomTabName
 
 		Tab.Topbar.ClickPart.InputBegan:Connect(function(Input)
+			if IsDragging then return end
 			if (Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch) then
+				IsDragging = true
 				IsTabDragging = true
 				TabDragStart = Input.Position
 				TabDragPos = Tab.Position
@@ -219,6 +222,7 @@ function Lib:CreateWindow(T)
 
 				local InputConnection = Input.Changed:Connect(function()
 					if Input.UserInputState == Enum.UserInputState.End then
+						IsDragging = false
 						IsTabDragging = false
 					end
 				end)
@@ -457,10 +461,13 @@ function Lib:CreateWindow(T)
 			Slider.TextBox.FocusLost:Connect(UpdateSlider)
 
 			Slider.Slider.InputBegan:Connect(function(Input)
+				if IsDragging then return end
 				if (Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch) then
+					IsDragging = true
 					MovingSlider = true
 					local InputConnection = Input.Changed:Connect(function()
 						if Input.UserInputState == Enum.UserInputState.End then
+							IsDragging = false
 							MovingSlider = false
 						end
 					end)
