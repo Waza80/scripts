@@ -958,4 +958,5 @@ G2L["66"]["CornerRadius"] = UDim.new(0, 6);
 G2L["67"] = Instance.new("UIStroke", G2L["64"]);
 G2L["67"]["Color"] = Color3.fromRGB(51, 51, 51);
 
+
 return G2L["1"], require;
