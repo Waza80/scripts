@@ -51,6 +51,7 @@ local S = U:CreateSlider({
 	Min = 16,
 	Max = 100,
 	Default = 35,
+	Increment = 4,
 	Callback = function(Value)
 		print("Slider set to", Value)
 	end
