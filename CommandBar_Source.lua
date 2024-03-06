@@ -9,12 +9,25 @@
 
 -- Instances: 19 | Scripts: 0 | Modules: 0
 local G2L = {};
+local CoreGui = game:GetService("CoreGui")
 
 -- StarterGui.BetterCommandBar
-G2L["1"] = Instance.new("ScreenGui", ((gethui or game:GetService("CoreGui") or game:GetService("Players"):WaitForChild("PlayerGui"));
+G2L["1"] = Instance.new("ScreenGui");
 G2L["1"]["IgnoreGuiInset"] = true;
 G2L["1"]["ScreenInsets"] = Enum.ScreenInsets.DeviceSafeInsets;
 G2L["1"]["Name"] = [[BetterCommandBar]];
+
+if gethui then
+    G2L["1"]["Parent"] = gethui()
+elseif CoreGui then
+    if CoreGui.RobloxGui then
+        G2L["1"]["Parent"] = CoreGui.RobloxGui
+    else
+        G2L["1"]["Parent"] = CoreGui
+    end
+else
+    G2L["1"]["Parent"] = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+end
 
 -- StarterGui.BetterCommandBar.Entry
 G2L["2"] = Instance.new("Frame", G2L["1"]);
