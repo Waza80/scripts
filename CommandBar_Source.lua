@@ -14,7 +14,7 @@ local G2L = {};
 G2L["1"] = Instance.new("ScreenGui");
 G2L["1"]["Name"] = [[BetterCommandBar]];
 
-if gethui then
+if gethui and gethui() then
 	G2L["1"]["Parent"] = gethui()
 elseif CoreGui then
 	if CoreGui.RobloxGui then
