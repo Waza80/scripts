@@ -13,6 +13,7 @@ local G2L = {};
 -- StarterGui.BetterCommandBar
 G2L["1"] = Instance.new("ScreenGui");
 G2L["1"]["Name"] = [[BetterCommandBar]];
+G2L["1"]["ResetOnSpawn"] = true;
 
 if gethui and gethui() then
 	G2L["1"]["Parent"] = gethui()
