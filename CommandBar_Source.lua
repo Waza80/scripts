@@ -9,6 +9,7 @@
 
 -- Instances: 21 | Scripts: 0 | Modules: 0
 local G2L = {};
+local CoreGui = game:GetService("CoreGui");
 
 -- StarterGui.BetterCommandBar
 G2L["1"] = Instance.new("ScreenGui");
