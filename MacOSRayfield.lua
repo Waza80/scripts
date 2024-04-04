@@ -6,6 +6,7 @@ by Sirius
 shlex  | Designing + Programming
 iRay   | Programming
 waza80 | Adding a dozen of bytes so hydrogen macOS doesn't fucking crashes
+
 ]]
 
 
@@ -119,7 +120,7 @@ local Rayfield = game:GetObjects("rbxassetid://10804731440")[1]
 Rayfield.Enabled = false
 
 
-if gethui then
+if gethui and gethui() then
 	Rayfield.Parent = gethui()
 elseif syn.protect_gui then 
 	syn.protect_gui(Rayfield)
@@ -995,7 +996,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 			Rayfield.Enabled = false
 			local KeyUI = game:GetObjects("rbxassetid://11380036235")[1]
 
-			if gethui then
+			if gethui and gethui() then
 				KeyUI.Parent = gethui()
 			elseif syn.protect_gui then
 				syn.protect_gui(Rayfield)
@@ -1004,7 +1005,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 				KeyUI.Parent = CoreGui
 			end
 
-			if gethui then
+			if gethui and gethui() then
 				for _, Interface in ipairs(gethui():GetChildren()) do
 					if Interface.Name == KeyUI.Name and Interface ~= KeyUI then
 						Interface.Enabled = false
