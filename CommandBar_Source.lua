@@ -14,7 +14,7 @@ local CoreGui = game:GetService("CoreGui");
 -- StarterGui.BetterCommandBar
 G2L["1"] = Instance.new("ScreenGui");
 G2L["1"]["Name"] = [[BetterCommandBar]];
-G2L["1"]["ResetOnSpawn"] = true;
+G2L["1"]["ResetOnSpawn"] = false;
 
 if gethui and gethui() then
 	G2L["1"]["Parent"] = gethui()
