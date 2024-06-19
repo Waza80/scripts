@@ -12,6 +12,7 @@ local G2L1, G2L2, G2L3, N = {}, {}, {}, {}
 
 -- services
 local CoreGui = game:GetService("CoreGui")
+local TextService = game:GetService("TextService")
 local TweenService = game:GetService("TweenService")
 
 -- functions
@@ -91,13 +92,9 @@ function N:Notify(Text, ButtonText, TweenTime, WaitForClick)
         Clicked = true
     end)
 
-    for i = 0, math.floor(G2L1["5"]["TextBounds"]["X"] / G2L1["2"]["AbsoluteSize"]["X"]) do
-        G2L1["2"]["Size"] = UDim2.new(0, G2L1["2"]["AbsoluteSize"]["X"], 0, G2L1["2"]["AbsoluteSize"]["Y"] + 30)
-    end
-
-    for i = 1, select(2, G2L1["5"]["Text"]:gsub("\n", "")) do
-        G2L1["2"]["Size"] = UDim2.new(0, G2L1["2"]["AbsoluteSize"]["X"], 0, G2L1["2"]["AbsoluteSize"]["Y"] + 30)
-    end
+    local TextSize = TextService:GetTextSize(Text, 30, Enum.Font.Montserrat, Vector2.new(280, math.huge)).Y
+    G2L1["5"]["Size"] = UDim2.new(1, -20, 0, TextSize)
+    G2L1["2"]["Size"] = UDim2.new(0, G2L1["2"]["AbsoluteSize"]["X"], 0, TextSize + 60)
 
     local tweens = {
         ["2"] = {BackgroundTransparency = 0},
@@ -266,13 +263,9 @@ function N:Prompt(Text, YesText, NoText, TweenTime)
         Chosen = nil
     end)
 
-    for i = 0, math.floor(G2L2["5"]["TextBounds"]["X"] / G2L2["2"]["AbsoluteSize"]["X"]) do
-        G2L2["2"]["Size"] = UDim2.new(0, G2L2["2"]["AbsoluteSize"]["X"], 0, G2L2["2"]["AbsoluteSize"]["Y"] + 30)
-    end
-
-    for i = 1, select(2, G2L2["5"]["Text"]:gsub("\n", "")) do
-        G2L2["2"]["Size"] = UDim2.new(0, G2L2["2"]["AbsoluteSize"]["X"], 0, G2L2["2"]["AbsoluteSize"]["Y"] + 30)
-    end
+    local TextSize = TextService:GetTextSize(Text, 30, Enum.Font.Montserrat, Vector2.new(380, math.huge)).Y
+    G2L2["5"]["Size"] = UDim2.new(1, -20, 0, TextSize)
+    G2L2["2"]["Size"] = UDim2.new(0, G2L2["2"]["AbsoluteSize"]["X"], 0, TextSize + 60)
 
     G2L2["f"].MouseEnter:Connect(function()
         G2L2["f"]["ImageColor3"] = Color3.fromRGB(255, 0, 0)
@@ -401,13 +394,9 @@ function N:Info(Title, Description, ButtonText, TweenTime, WaitForClick)
         Clicked = true
     end)
 
-    for i = 0, math.floor(G2L3["5"]["TextBounds"]["X"] / G2L3["2"]["AbsoluteSize"]["X"]) do
-        G2L3["2"]["Size"] = UDim2.new(0, G2L3["2"]["AbsoluteSize"]["X"], 0, G2L3["2"]["AbsoluteSize"]["Y"] + 30)
-    end
-
-    for i = 1, select(2, G2L3["5"]["Text"]:gsub("\n", "")) do
-        G2L3["2"]["Size"] = UDim2.new(0, G2L3["2"]["AbsoluteSize"]["X"], 0, G2L3["2"]["AbsoluteSize"]["Y"] + 30)
-    end
+    local TextSize = TextService:GetTextSize(Description, 30, Enum.Font.Montserrat, Vector2.new(280, math.huge)).Y
+    G2L3["5"]["Size"] = UDim2.new(1, -20, 0, TextSize)
+    G2L3["2"]["Size"] = UDim2.new(0, G2L3["2"]["AbsoluteSize"]["X"], 0, TextSize + 110)
 
     local tweens = {
         ["2"] = {BackgroundTransparency = 0},
