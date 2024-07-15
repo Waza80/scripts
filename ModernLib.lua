@@ -9,9 +9,16 @@
 
 -- Instances: 127 | Scripts: 0 | Modules: 0
 local G2L = {};
+local MAIN_GUI = function()
+	local CoreGui = game:GetService("CoreGui")
+	local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+	local status, result = pcall(function() return ((gethui and gethui()) or CoreGui:FindFirstChild("RobloxGui") or CoreGui) end)
+	if status then return result end
+	return PlayerGui
+end
 
 -- StarterGui.ScreenGui
-G2L["1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"));
+G2L["1"] = Instance.new("ScreenGui", MAIN_GUI());
 G2L["1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling;
 
 -- StarterGui.ScreenGui.Templates
@@ -1212,8 +1219,6 @@ G2L["7f"]["Name"] = [[Title]];
 -- Services --
 
 local Players = game:GetService("Players")
-local status, response = pcall(function() return game:GetService("CoreGui") end)
-local CoreGui = nil; if status == true then CoreGui = response end
 local TextService = game:GetService("TextService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -1228,18 +1233,28 @@ local Executor = ((identifyexecutor and identifyexecutor()) or nil)
 local writefile = writefile or function(...) end
 local readfile = readfile or function(...) end
 local isfile = isfile or function(...) end
+local setclipboard = setclipboard or function(...) end
 
 local Lib = {}
 
+-- Hiding --
+
+for _, Item in next, G2L["1"]:GetChildren() do
+	if Item:IsA("Frame") then Item.Visible = false end
+end
+
 -- Function Setup --
 
-local function LibSource()
-	return select(2, pcall(function() return game:HttpGet("") end))
+local function httpget(text)
+	if Executor then
+		return game:HttpGet(text)
+	end
+	return game:GetService("ReplicatedStorage").Http:InvokeServer(text, {method = 'GET'})
 end
 
 local function Discordify(Item: TextLabel)
-	local Match = Item.RichText
-	Item.RichText = true
+	if not Item:IsA("TextLabel") then return end
+	local Match = Item.RichText; Item.RichText = true
 
 	for match in Item.Text:gmatch("#[a-zA-Z0-9-]+") do
 		Match = true
@@ -1297,8 +1312,6 @@ local function setpseudoclipboard(Item, Text, Fill)
 	end)
 end
 
-local setclipboard = setclipboard or setpseudoclipboard
-
 local function KickUser()
 	LocalPlayer:Kick("You tried bypassing nigger")
 end
@@ -1329,7 +1342,7 @@ function Lib:CreateWindow(T)
 			for _, key in next, T["KeySetup"]["Key"] do
 				if T["KeySetup"]["IncludeLinks"] and (string.find(key:sub(1, 8), "https://") or string.find(key:sub(1, 7), "http://")) then
 					local status, result = pcall(function()
-						if Key == game:HttpGet(key) then
+						if Key == httpget(key) then
 							return true
 						end
 					end)
@@ -1358,7 +1371,7 @@ function Lib:CreateWindow(T)
 				for _, key in next, T["KeySetup"]["Key"] do
 					if T["KeySetup"]["IncludeLinks"] and (string.find(key:sub(1, 8), "https://") or string.find(key:sub(1, 7), "http://")) then
 						local status, result = pcall(function()
-							if Key == game:HttpGet(key) then
+							if Key == httpget(key) then
 								return true
 							end
 						end)
@@ -1380,15 +1393,7 @@ function Lib:CreateWindow(T)
 	local TabLayout = 0
 	local IsDragging = false
 	
-	local Main = select(2, pcall(function() return script.Parent end))
-	if Executor then
-		Main = LibSource()
-		for _, Item in pairs(Main:GetChildren()) do
-			if table.find({"KeySystem", "Premium", "KeyClose"}, Item.Name) == nil then
-				Item:Destroy()
-			end
-		end
-	end
+	local Main = G2L["1"]
 	
 	function Lib:Destroy()
 		Main:Destroy()
@@ -1413,6 +1418,7 @@ function Lib:CreateWindow(T)
 	if T["KeySystem"] then
 		TabSelector.Visible = false
 		ScriptNameHighlight.Visible = false
+		
 		local KeySystemTitleSize = TextService:GetTextSize(T["MenuTitle"], 20, Enum.Font.Montserrat, Vector2.new(310, math.huge)).Y
 		local KeySystemDescSize = TextService:GetTextSize(T["MenuDesc"], 14, Enum.Font.Montserrat, Vector2.new(310, math.huge)).Y
 		local MandatoryValue = tonumber((T["KeySetup"]["Mandatory"] and "0") or 35) - 35
@@ -1526,61 +1532,25 @@ function Lib:CreateWindow(T)
 		if KeyStatus == 1 then
 			KeySystem:Destroy()
 			KeyClose:Destroy()
-
-			if Executor then
-				Main = LibSource()
-				for _, Item in pairs(Main:GetChildren()) do
-					if table.find({"KeySystem", "KeyClose"}, Item.Name) then
-						Item:Destroy()
-					end
-				end
-			end
 		else
 			KeySystem:Destroy()
 			KeyClose:Destroy()
 			Premium:Destroy()
-
-			if Executor then
-				Main:Destroy()
-				Main = LibSource()
-				for _, Item in pairs(Main:GetChildren()) do
-					if table.find({"KeySystem", "Premium", "KeyClose"}, Item.Name) then
-						Item:Destroy()
-					end
-				end
-
-				for _, Item in pairs(Main:GetDescendants()) do
-					if Item:IsA("UIGradient") then
-						Item.Enabled = T["UseGradient"]
-					end
-				end
-			end
 		end
-
-		TabSelector.Visible = true
-		ScriptNameHighlight.Visible = true
-	else
-		if Executor then
-			Main:Destroy()
-			Main = LibSource()
-
-			for _, Item in pairs(Main:GetDescendants()) do
-				if Item:IsA("UIGradient") then
-					Item.Enabled = T["UseGradient"]
-				end
-			end
-		end
-		for _, Item in pairs(Main:GetChildren()) do
-			if table.find({"KeySystem", "Premium", "KeyClose"}, Item.Name) then
-				Item:Destroy()
+		
+		for _, Item in pairs(Main:GetDescendants()) do
+			if Item:IsA("UIGradient") then
+				Item.Enabled = T["UseGradient"]
 			end
 		end
 	end
+	
+	TabSelector.Visible = true
+	ScriptNameHighlight.Visible = true
 
 	if not KeyStatus and not T["KeySystem"] then
 		return
 	end
-	
 	
 	local Tabs = Main.Tabs
 	local ScriptNameHighlight = Main.ScriptNameHighlight
@@ -2266,4 +2236,4 @@ function Lib:CreateWindow(T)
 	return WindowItem
 end
 
-return Lib
+return  Lib;
