@@ -23,7 +23,7 @@ local Lib = {}
 -- Function Setup --
 
 local function LibSource()
-	return select(2, pcall(function() return game:HttpGet("") end))
+	return select(2, pcall(function() return game:HttpGet("https://raw.githubusercontent.com/Waza80/scripts/main/ModernUI_Source.lua") end))
 end
 
 local function Discordify(Item: TextLabel)
