@@ -3,6 +3,7 @@
 local Players = game:GetService("Players")
 local status, response = pcall(function() return game:GetService("CoreGui") end)
 local CoreGui = nil; if status == true then CoreGui = response end
+local TextService = game:GetService("TextService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -11,12 +12,91 @@ local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerMouse = LocalPlayer:GetMouse()
 local Camera = workspace.CurrentCamera
+
+local Executor = ((identifyexecutor and identifyexecutor()) or nil)
+local writefile = writefile or function(...) end
+local readfile = readfile or function(...) end
+local isfile = isfile or function(...) end
+
 local Lib = {}
 
 -- Function Setup --
 
+local function LibSource()
+	return select(2, pcall(function() return game:HttpGet("") end))
+end
+
+local function Discordify(Item: TextLabel)
+	local Match = Item.RichText
+	Item.RichText = true
+
+	for match in Item.Text:gmatch("#[a-zA-Z0-9-]+") do
+		Match = true
+		Item.Text = Item.Text:gsub(table.concat(string.split(match, "-"), "%-"), "<font color='rgb(0, 200, 255)'>" .. match .. "</font>")
+	end
+
+	if not Match then
+		Item.RichText = false
+	end
+end
+
+local function setpseudoclipboard(Item, Text, Fill)
+	Fill = Fill or false
+
+	local TextFrame = Item:Clone()
+	TextFrame:ClearAllChildren()
+	TextFrame.Parent = Item
+	TextFrame.Active = false
+	TextFrame.AnchorPoint = Vector2.new(0, 0)
+	TextFrame.Position = UDim2.new(0, 0, 0, 0)
+	TextFrame.Size = UDim2.new(1, 0, 1, 0)
+	TextFrame.BackgroundTransparency = 1
+	if TextFrame["Text"] then TextFrame.Text = "" end
+
+	local TextBox = Instance.new("TextBox", TextFrame)
+	TextBox.BackgroundTransparency = 1
+	TextBox.ClearTextOnFocus = false
+	TextBox.Size = UDim2.new(1, 0, 1, 0)
+	TextBox.Text = Text
+	TextBox.TextWrapped = true
+	if Item["TextColor3"] then TextBox.TextColor3 = Item.TextColor3 else TextBox.TextColor3 = Color3.fromRGB(255, 255, 255) end
+	if Item["FontFace"] then TextBox.FontFace = Item.FontFace else TextBox.FontFace = Enum.Font.Montserrat end
+	if Item["TextSize"] then TextBox.TextSize = Item.TextSize end
+	if Item["TextStrokeTransparency"] then TextBox.TextStrokeTransparency = Item.TextStrokeTransparency end
+	if Item["TextStrokeColor3"] then TextBox.TextStrokeColor3 = Item.TextStrokeColor3 end
+
+	if Fill then
+		TextFrame.BackgroundTransparency = 0
+		if Item:FindFirstChildWhichIsA("UICorner") then
+			local UICorner = Instance.new("UICorner", TextFrame)
+			UICorner.CornerRadius = Item:FindFirstChildWhichIsA("UICorner").CornerRadius
+		end
+	end
+
+	TextBox:CaptureFocus()
+
+	TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+		if TextBox.Text ~= Text then
+			TextBox.Text = Text
+		end
+	end)
+
+	TextBox.FocusLost:Connect(function()
+		TextFrame:Destroy()
+	end)
+end
+
+local setclipboard = setclipboard or setpseudoclipboard
+
+local function KickUser()
+	LocalPlayer:Kick("You tried bypassing nigger")
+end
+
 function Lib:CreateWindow(T)
 	T["Name"] = T["Name"] or ""
+	T["MenuTitle"] = T["MenuTitle"] or "Unnamed"
+	T["MenuDesc"] = T["MenuDesc"] or ""
+	T["FolderName"] = T["FolderName"] or (T["Name"] ~= "" and T["Name"]) or "Unnamed" -- Your folder's name, defaults to your lib's name
 	T["SelectorTopDistance"] = T["SelectorTopDistance"] or 5
 	T["Rainbow"] = T["Rainbow"] or false
 	if T["ShowCloseButton"] == nil then T["ShowCloseButton"] = true end
@@ -24,35 +104,272 @@ function Lib:CreateWindow(T)
 	if T["ResetTabPosition"] == nil then T["ResetTabPosition"] = true end
 	T["ClosePosition"] = T["ClosePosition"] or "center"
 
+	T["KeySystem"] = T["KeySystem"] or false
+	if T["KeySetup"] then
+		T["KeySetup"]["Title"] = T["KeySetup"]["Title"] or "Key System"
+		T["KeySetup"]["Desc"] = T["KeySetup"]["Desc"] or "Please complete the key system in order to access premium features."
+		T["KeySetup"]["Note"] = T["KeySetup"]["Note"] or nil
+		T["KeySetup"]["SaveKey"] = T["KeySetup"]["SaveKey"] or false
+		T["KeySetup"]["SaveFile"] = T["KeySetup"]["SaveFile"] or nil
+		T["KeySetup"]["KeyLink"] = T["KeySetup"]["KeyLink"] or nil
+		assert(T["KeySetup"]["Key"] and #T["KeySetup"]["Key"] > 0, "No key provided, Key System will be disabled")
+		T["KeySetup"]["IncludeLinks"] = T["KeySetup"]["IncludeLinks"] or false
+		T["KeySetup"]["CheckFunc"] = T["KeySetup"]["CheckFunc"] or function(Key)
+			for _, key in next, T["KeySetup"]["Key"] do
+				if T["KeySetup"]["IncludeLinks"] and (string.find(key:sub(1, 8), "https://") or string.find(key:sub(1, 7), "http://")) then
+					local status, result = pcall(function()
+						if Key == game:HttpGet(key) then
+							return true
+						end
+					end)
+					if result == true then
+						return true
+					end
+				else
+					if Key == key then
+						return true
+					end
+				end
+			end
+		end
+	else
+		T["KeySetup"] = {
+			Mandatory = false, -- Whether or not you're obligated to do the key system
+			Title = "Key System",
+			Desc = "Please complete the key system in order to access premium features.",
+			Note = nil, -- The note; can be a way to use the key. Discord channels are highlighted in blue
+			SaveKey = true, -- Whether or not to save the key
+			SaveFile = nil, -- The file to save the key in. Default: Your hub's name/SavedKey
+			KeyLink = nil, -- Whether or not to include a key link, and the associated link
+			Key = {"Test"}, -- Keys that will be valid
+			IncludeLinks = false, -- Whether or not to request key from links if given
+			CheckFunc = function(Key)
+				for _, key in next, T["KeySetup"]["Key"] do
+					if T["KeySetup"]["IncludeLinks"] and (string.find(key:sub(1, 8), "https://") or string.find(key:sub(1, 7), "http://")) then
+						local status, result = pcall(function()
+							if Key == game:HttpGet(key) then
+								return true
+							end
+						end)
+						if result == true then
+							return true
+						end
+					else
+						if Key == key then
+							return true
+						end
+					end
+				end
+			end
+		}
+	end
+
 	local WindowItem = {}
 	local SelectedTab = nil	
 	local TabLayout = 0
 	local IsDragging = false
 	
-	local Main = nil
-	local status, response = pcall(function()
-		return loadstring(game:HttpGet("https://github.com/Waza80/scripts/raw/main/ModernUI_Source.lua"))()
-	end)
+	local Main = select(2, pcall(function() return script.Parent end))
+	if Executor then
+		Main = LibSource()
+		for _, Item in pairs(Main:GetChildren()) do
+			if table.find({"KeySystem", "Premium", "KeyClose"}, Item.Name) == nil then
+				Item:Destroy()
+			end
+		end
+	end
+	
+	function Lib:Destroy()
+		Main:Destroy()
+	end
 
-	if status == true then
-		Main = response
-		pcall(function()
-			if getgenv().gethui then
-				Main.Parent = gethui()
-			elseif CoreGui then
-				if CoreGui:FindFirstChild("RobloxGui") then
-					Main.Parent = CoreGui.RobloxGui
-				else
-					Main.Parent = CoreGui
-				end
+	function WindowItem:Destroy()
+		Main:Destroy()
+	end
+	
+	local TabSelector = Main.TabSelector
+	local ScriptNameHighlight = Main.ScriptNameHighlight
+	
+	local KeySystem = Main.KeySystem
+	local Premium = Main.Premium
+	local KeyClose = Main.KeyClose
+
+	local KeyStatus = false; -- 1: Free / 2: Key
+	local PremiumOpened = false
+	local KeySwitchSpeed = 0.5
+	
+	-- Key System
+	if T["KeySystem"] then
+		TabSelector.Visible = false
+		ScriptNameHighlight.Visible = false
+		local KeySystemTitleSize = TextService:GetTextSize(T["MenuTitle"], 20, Enum.Font.Montserrat, Vector2.new(310, math.huge)).Y
+		local KeySystemDescSize = TextService:GetTextSize(T["MenuDesc"], 14, Enum.Font.Montserrat, Vector2.new(310, math.huge)).Y
+		local MandatoryValue = tonumber((T["KeySetup"]["Mandatory"] and "0") or 35) - 35
+		KeySystem.Visible = true
+		KeySystem.AnchorPoint = Vector2.new(0.5, 0.5)
+		KeySystem.Position = UDim2.new(0.5, 0, 0.5, 0)
+		KeySystem.Desc.Position = UDim2.new(0.5, 0, 0, 12 + KeySystemTitleSize)
+		KeySystem.Size = UDim2.new(0, 330, 0, 103 + KeySystemTitleSize + KeySystemDescSize + MandatoryValue)
+		KeySystem.Title.Size = UDim2.new(1, -20, 0, KeySystemTitleSize)
+		KeySystem.Desc.Size = UDim2.new(1, -20, 0, KeySystemDescSize)
+		KeySystem.Title.Text = T["MenuTitle"]
+		KeySystem.Desc.Text = T["MenuDesc"]
+		if T["KeySetup"]["Mandatory"] then 
+			KeySystem.FreeVersion.Visible = false
+			KeySystem.PremiumVersion.Text = "Access Script [Key System]"
+		end
+
+		local KeySetupTitleSize = TextService:GetTextSize(T["KeySetup"]["Title"], 20, Enum.Font.Montserrat, Vector2.new(310, math.huge)).Y
+		local KeySetupDescSize = TextService:GetTextSize(T["KeySetup"]["Desc"], 14, Enum.Font.Montserrat, Vector2.new(310, math.huge)).Y
+		local KeySetupNoteSize = (T["KeySetup"]["Note"] and TextService:GetTextSize((T["KeySetup"]["Note"] and "NOTE:\n" .. T["KeySetup"]["Note"]) or "", 14, Enum.Font.Montserrat, Vector2.new(310, math.huge)).Y) or -10
+		local KeySetupCopySize = (T["KeySetup"]["KeyLink"] and 35) or 0
+		Premium.Visible = true
+		Premium.Close.Visible = false
+		Premium.CopyLink.Visible = (T["KeySetup"]["KeyLink"] and true) or false
+		Premium.AnchorPoint = Vector2.new(0, 0.5)
+		Premium.Position = UDim2.new(1, 0, 0.5, 0)
+		Premium.Desc.Position = UDim2.new(0.5, 0, 0, 12 + KeySetupTitleSize)
+		Premium.KeyEntry.Position = UDim2.new(0.5, 0, 1, -((T["KeySetup"]["KeyLink"] and 45) or 10))
+		Premium.Size = UDim2.new(0, 330, 0, 78 + KeySetupTitleSize + KeySetupDescSize + KeySetupNoteSize + KeySetupCopySize)
+		Premium.Title.Size = UDim2.new(1, -20, 0, KeySetupTitleSize)
+		Premium.Desc.Size = UDim2.new(1, -20, 0, KeySetupDescSize)
+		Premium.Note.Size = UDim2.new(1, -20, 0, KeySetupNoteSize)
+		Premium.Title.Text = T["KeySetup"]["Title"]
+		Premium.Desc.Text = T["KeySetup"]["Desc"]
+		Premium.Note.Text = (T["KeySetup"]["Note"] and "<font weight='900'>NOTE:</font>\n" .. T["KeySetup"]["Note"]) or ""
+		Discordify(Premium.Note)
+
+		KeyClose.Visible = true
+		KeyClose.Position = UDim2.new(0.5, 0, 0.5, -(KeySystem.AbsoluteSize.Y / 2) - 10)
+		KeyClose.MouseButton1Click:Connect(function() Lib:Destroy() end)
+
+		KeySystem.FreeVersion.MouseButton1Click:Connect(function()
+			KeyStatus = 1
+		end)
+
+		KeySystem.PremiumVersion.MouseButton1Click:Connect(function()
+			PremiumOpened = not PremiumOpened
+			if PremiumOpened then
+				TweenService:Create(KeySystem, TweenInfo.new(KeySwitchSpeed, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(0.5, -10, 0.5, 0)}):Play()
+				TweenService:Create(Premium, TweenInfo.new(KeySwitchSpeed, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0.5, 10, 0.5, 0)}):Play()
+				TweenService:Create(KeyClose, TweenInfo.new(KeySwitchSpeed, Enum.EasingStyle.Quad), {Position = UDim2.new(0.5, 0, 0.5, -(math.max(KeySystem.AbsoluteSize.Y, Premium.AbsoluteSize.Y) / 2) - 10)}):Play()
+			else
+				TweenService:Create(KeySystem, TweenInfo.new(KeySwitchSpeed, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+				TweenService:Create(Premium, TweenInfo.new(KeySwitchSpeed, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(1, 0, 0.5, 0)}):Play()
+				TweenService:Create(KeyClose, TweenInfo.new(KeySwitchSpeed, Enum.EasingStyle.Quad), {Position = UDim2.new(0.5, 0, 0.5, -(KeySystem.AbsoluteSize.Y / 2) - 10)}):Play()
 			end
 		end)
+
+		if T["KeySetup"]["KeyLink"] then
+			Premium.CopyLink.MouseButton1Click:Connect(function()
+				if Executor then
+					setclipboard(T["KeySetup"]["KeyLink"])
+				else
+					setpseudoclipboard(Premium.CopyLink, T["KeySetup"]["KeyLink"], true)
+				end
+			end)
+		end
+
+		Premium.KeyEntry.FocusLost:Connect(function()
+			if Premium.KeyEntry.Text == "" then return end
+
+			local ValidKey = false
+			local KeyAttempt = Premium.KeyEntry.Text
+
+			if T["KeySetup"]["CheckFunc"](KeyAttempt) then
+				KeyStatus = 2
+				if T["KeySetup"]["SaveKey"] then
+					if Executor then
+						if T["KeySetup"]["SaveFile"] then
+							writefile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"], KeyAttempt)
+						else
+							writefile(T["FolderName"] .. "/" .. "Key", KeyAttempt)
+						end
+					end
+				end
+			else
+				local OriginalPos = Premium.KeyEntry.Position
+				for i = 1, 2 do
+					TweenService:Create(Premium.KeyEntry, TweenInfo.new(0.1), {Position = UDim2.new(0.5, OriginalPos.X.Offset + 5, 1, OriginalPos.Y.Offset)}):Play()
+					task.wait(0.1)
+					TweenService:Create(Premium.KeyEntry, TweenInfo.new(0.1), {Position = UDim2.new(0.5, OriginalPos.X.Offset - 5, 1, OriginalPos.Y.Offset)}):Play()
+					task.wait(0.1)
+				end
+				TweenService:Create(Premium.KeyEntry, TweenInfo.new(0.1), {Position = OriginalPos}):Play()
+			end
+		end)
+
+		if Executor and T["KeySetup"]["SaveKey"] and ((T["KeySetup"]["SaveFile"] and isfile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"])) or isfile(T["FolderName"] .. "/" .. "Key")) then
+			local SavedKey = ((T["KeySetup"]["SaveFile"] and readfile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"])) or readfile(T["FolderName"] .. "/" .. "Key"))
+			if T["KeySetup"]["CheckFunc"](SavedKey) then
+				KeyStatus = 2
+			end
+		end
+
+		repeat task.wait() until KeyStatus
+
+		TweenService:Create(KeySystem, TweenInfo.new(0.65, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(0, 0, 0.5, 0)}):Play()
+		TweenService:Create(Premium, TweenInfo.new(0.65, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(1, 0, 0.5, 0)}):Play()
+		TweenService:Create(KeyClose, TweenInfo.new(0.65, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 0, 0)}):Play()	
+
+		if KeyStatus == 1 then
+			KeySystem:Destroy()
+			KeyClose:Destroy()
+
+			if Executor then
+				Main = LibSource()
+				for _, Item in pairs(Main:GetChildren()) do
+					if table.find({"KeySystem", "KeyClose"}, Item.Name) then
+						Item:Destroy()
+					end
+				end
+			end
+		else
+			KeySystem:Destroy()
+			KeyClose:Destroy()
+			Premium:Destroy()
+
+			if Executor then
+				Main:Destroy()
+				Main = LibSource()
+				for _, Item in pairs(Main:GetChildren()) do
+					if table.find({"KeySystem", "Premium", "KeyClose"}, Item.Name) then
+						Item:Destroy()
+					end
+				end
+
+				for _, Item in pairs(Main:GetDescendants()) do
+					if Item:IsA("UIGradient") then
+						Item.Enabled = T["UseGradient"]
+					end
+				end
+			end
+		end
+
+		TabSelector.Visible = true
+		ScriptNameHighlight.Visible = true
 	else
-		Main = script.Parent:Clone()
-		if Main:FindFirstChild("MainHandler") then Main:FindFirstChild("MainHandler"):Destroy() end
-		Main.Parent = script.Parent.Parent
-		script.Parent.Enabled = false
+		if Executor then
+			Main:Destroy()
+			Main = LibSource()
+
+			for _, Item in pairs(Main:GetDescendants()) do
+				if Item:IsA("UIGradient") then
+					Item.Enabled = T["UseGradient"]
+				end
+			end
+		end
+		for _, Item in pairs(Main:GetChildren()) do
+			if table.find({"KeySystem", "Premium", "KeyClose"}, Item.Name) then
+				Item:Destroy()
+			end
+		end
 	end
+
+	if not KeyStatus and not T["KeySystem"] then
+		return
+	end
+	
 	
 	local Tabs = Main.Tabs
 	local ScriptNameHighlight = Main.ScriptNameHighlight
@@ -95,7 +412,7 @@ function Lib:CreateWindow(T)
 				SelectedTabButton = TabButton
 				if Tab.Position == UDim2.new(0.5, 0, 0.5, 0) or T["ResetTabPosition"] == true then
 					if T["MultipleTabs"] == false then
-						Tab.Position = UDim2.new(0.5, math.random(-20, 20), 0.5, math.random(-20, 20))
+						Tab.Position = UDim2.new(0.5, 0, 0.5, 0)
 					end
 				end
 				Tab.Visible = true
@@ -110,9 +427,7 @@ function Lib:CreateWindow(T)
 					TabButton.IsOpened.Value = true
 					Tab.Visible = true
 					if Tab.Position == UDim2.new(0.5, 0, 0.5, 0) or T["ResetTabPosition"] == true then
-						if T["MultipleTabs"] == false then
-							Tab.Position = UDim2.new(0.5, math.random(-20, 20), 0.5, math.random(-20, 20))
-						end
+						Tab.Position = UDim2.new(0.5, math.random(-20, 20), 0.5, math.random(-20, 20))
 					end
 					TweenService:Create(TabButton, TweenInfo.new(0.5), {BackgroundTransparency = 0.2}):Play()
 					TweenService:Create(TabButton.Label, TweenInfo.new(0.5), {TextColor3 = Color3.fromRGB(24, 24, 28)}):Play()
@@ -189,10 +504,6 @@ function Lib:CreateWindow(T)
 			task.wait(0.2)
 			CloseButtonOnCooldown = false
 		end)
-	end
-
-	function WindowItem:Destroy()
-		Main:Destroy()
 	end
 	
 	function WindowItem:CreateTab(Name)
