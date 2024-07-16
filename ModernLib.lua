@@ -1516,11 +1516,13 @@ function Lib:CreateWindow(T)
 			end
 		end)
 
-		if Executor and T["KeySetup"]["SaveKey"] and ((T["KeySetup"]["SaveFile"] and isfile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"])) or isfile(T["FolderName"] .. "/" .. "Key")) then
-			local SavedKey = ((T["KeySetup"]["SaveFile"] and readfile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"])) or readfile(T["FolderName"] .. "/" .. "Key"))
-			if T["KeySetup"]["CheckFunc"](SavedKey) then
-				KeyStatus = 2
-			end
+		if Executor and T["KeySetup"]["SaveKey"] then
+			pcall(function()
+				local SavedKey = ((T["KeySetup"]["SaveFile"] and readfile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"])) or readfile(T["FolderName"] .. "/" .. "Key"))
+				if T["KeySetup"]["CheckFunc"](SavedKey) then
+					KeyStatus = 2
+				end
+			end)
 		end
 
 		repeat task.wait() until KeyStatus
