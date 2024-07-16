@@ -2217,7 +2217,7 @@ function Lib:CreateWindow(T)
 			end)
 			
 			Input.TextBox.FocusLost:Connect(UpdateInput)
-			
+	
 			--[[ DEPRECATED FUNCTION
 			function InputItem:Set(Type)
 				if table.find({"string", "int"}, Type) ~= nil then
@@ -2236,4 +2236,4 @@ function Lib:CreateWindow(T)
 	return WindowItem
 end
 
-return  Lib;
+return Lib
