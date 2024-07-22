@@ -1393,6 +1393,8 @@ function Lib:CreateWindow(T)
 	local TabLayout = 0
 	local IsDragging = false
 	
+	pcall(function() makefolder(T["FolderName"]) end)
+	
 	local Main = G2L["1"]
 	
 	function Lib:Destroy()
@@ -1494,16 +1496,17 @@ function Lib:CreateWindow(T)
 			local KeyAttempt = Premium.KeyEntry.Text
 
 			if T["KeySetup"]["CheckFunc"](KeyAttempt) then
-				KeyStatus = 2
 				if T["KeySetup"]["SaveKey"] then
-					if Executor then
-						if T["KeySetup"]["SaveFile"] then
-							writefile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"], KeyAttempt)
-						else
-							writefile(T["FolderName"] .. "/" .. "Key", KeyAttempt)
-						end
+					print("key Saving")
+					if T["KeySetup"]["SaveFile"] then
+						print(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"])
+						writefile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"], KeyAttempt)
+					else
+						print(T["FolderName"] .. "/" .. "Key")
+						writefile(T["FolderName"] .. "/" .. "Key", KeyAttempt)
 					end
 				end
+				KeyStatus = 2
 			else
 				local OriginalPos = Premium.KeyEntry.Position
 				for i = 1, 2 do
@@ -1516,7 +1519,7 @@ function Lib:CreateWindow(T)
 			end
 		end)
 
-		if Executor and T["KeySetup"]["SaveKey"] then
+		if T["KeySetup"]["SaveKey"] then
 			pcall(function()
 				local SavedKey = ((T["KeySetup"]["SaveFile"] and readfile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"])) or readfile(T["FolderName"] .. "/" .. "Key"))
 				if T["KeySetup"]["CheckFunc"](SavedKey) then
@@ -1539,21 +1542,25 @@ function Lib:CreateWindow(T)
 			KeyClose:Destroy()
 			Premium:Destroy()
 		end
-		
-		for _, Item in pairs(Main:GetDescendants()) do
-			if Item:IsA("UIGradient") then
-				Item.Enabled = T["UseGradient"]
-			end
+	else
+		KeySystem:Destroy()
+		KeyClose:Destroy()
+		Premium:Destroy()
+	end
+	
+	if not KeyStatus and T["KeySystem"] then
+		return
+	end
+	
+	for _, Item in pairs(Main:GetDescendants()) do
+		if Item:IsA("UIGradient") then
+			Item.Enabled = T["UseGradient"]
 		end
 	end
 	
 	TabSelector.Visible = true
 	ScriptNameHighlight.Visible = true
 
-	if not KeyStatus and not T["KeySystem"] then
-		return
-	end
-	
 	local Tabs = Main.Tabs
 	local ScriptNameHighlight = Main.ScriptNameHighlight
 	local TabSelector = Main.TabSelector
@@ -1693,13 +1700,12 @@ function Lib:CreateWindow(T)
 		local TabItem = {}
 		local TabItemLayout = 0
 		local IsTabDragging, TabDragStart, TabDragPos = nil, nil, nil
-		local RandomTabName =  "_" .. math.random(1000000000000, 9999999999999)
 		
 		local Tab = Templates.TabTemplate:Clone()
 		Tab.Parent = Tabs
 		Tab.Topbar.Label.Text = Name
 		Tab.Visible = false
-		Tab.Name = Name .. RandomTabName
+		Tab.Name = Name .. "_" .. math.random(1000000000000, 9999999999999)
 
 		Tab.Topbar.ClickPart.InputBegan:Connect(function(Input)
 			if IsDragging then return end
@@ -1736,10 +1742,11 @@ function Lib:CreateWindow(T)
 			end
 		end)
 		
+		task.wait()
 		local TabButton = Templates.TabButtonTemplate:Clone()
 		TabButton.Parent = TabContainer
 		TabButton.Label.Text = Name
-		TabButton.Name = Name .. RandomTabName
+		TabButton.Name = Name .. "_" .. math.random(1000000000000, 9999999999999)
 		TabButton.LayoutOrder = TabLayout; TabLayout = TabLayout + 1
 		TabButton.Size = UDim2.new(0, TabButton.Label.TextBounds.X + 8, 1, 0)
 		
