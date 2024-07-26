@@ -1412,9 +1412,10 @@ function Lib:CreateWindow(T)
 	local Premium = Main.Premium
 	local KeyClose = Main.KeyClose
 
-	local KeyStatus = false; -- 1: Free / 2: Key
 	local PremiumOpened = false
 	local KeySwitchSpeed = 0.5
+
+	WindowItem.KeyStatus = false; -- 1: Free / 2: Key
 	
 	-- Key System
 	if T["KeySystem"] then
@@ -1463,7 +1464,7 @@ function Lib:CreateWindow(T)
 		KeyClose.MouseButton1Click:Connect(function() Lib:Destroy() end)
 
 		KeySystem.FreeVersion.MouseButton1Click:Connect(function()
-			KeyStatus = 1
+			WindowItem.KeyStatus = 1
 		end)
 
 		KeySystem.PremiumVersion.MouseButton1Click:Connect(function()
@@ -1506,7 +1507,7 @@ function Lib:CreateWindow(T)
 						writefile(T["FolderName"] .. "/" .. "Key", KeyAttempt)
 					end
 				end
-				KeyStatus = 2
+				WindowItem.KeyStatus = 2
 			else
 				local OriginalPos = Premium.KeyEntry.Position
 				for i = 1, 2 do
@@ -1523,18 +1524,18 @@ function Lib:CreateWindow(T)
 			pcall(function()
 				local SavedKey = ((T["KeySetup"]["SaveFile"] and readfile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"])) or readfile(T["FolderName"] .. "/" .. "Key"))
 				if T["KeySetup"]["CheckFunc"](SavedKey) then
-					KeyStatus = 2
+					WindowItem.KeyStatus = 2
 				end
 			end)
 		end
 
-		repeat task.wait() until KeyStatus
+		repeat task.wait() until WindowItem.KeyStatus
 
 		TweenService:Create(KeySystem, TweenInfo.new(0.65, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(0, 0, 0.5, 0)}):Play()
 		TweenService:Create(Premium, TweenInfo.new(0.65, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(1, 0, 0.5, 0)}):Play()
 		TweenService:Create(KeyClose, TweenInfo.new(0.65, Enum.EasingStyle.Quad), {AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 0, 0)}):Play()	
 
-		if KeyStatus == 1 then
+		if WindowItem.KeyStatus == 1 then
 			KeySystem:Destroy()
 			KeyClose:Destroy()
 		else
@@ -1548,7 +1549,7 @@ function Lib:CreateWindow(T)
 		Premium:Destroy()
 	end
 	
-	if not KeyStatus and T["KeySystem"] then
+	if not WindowItem.KeyStatus and T["KeySystem"] then
 		return
 	end
 	
