@@ -876,7 +876,7 @@ G2L["5c"]["TextWrapped"] = true
 
 -- StarterGui.AAA.Templates.NotificationTemplate.Buttons
 G2L["5d"] = Instance.new("ScrollingFrame", G2L["58"]);
-G2L["5d"]["Active"] = true;
+G2L["5d"]["Active"] = false;
 G2L["5d"]["ScrollingDirection"] = Enum.ScrollingDirection.X;
 G2L["5d"]["BorderSizePixel"] = 0;
 G2L["5d"]["CanvasSize"] = UDim2.new(0, 0, 0, 0);
@@ -1338,15 +1338,16 @@ G2L["8b"]["Name"] = [[Title]];
 
 -- StarterGui.AAA.Notifications
 G2L["8c"] = Instance.new("ScrollingFrame", G2L["1"]);
-G2L["8c"]["Active"] = true;
+G2L["8c"]["Active"] = false;
+G2L["8c"]["AutomaticSize"] = Enum.AutomaticSize.Y
 G2L["8c"]["BorderSizePixel"] = 0;
 G2L["8c"]["CanvasSize"] = UDim2.new(0, 0, 0, 0);
 G2L["8c"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
 G2L["8c"]["Name"] = [[Notifications]];
-G2L["8c"]["AnchorPoint"] = Vector2.new(1, 0.5);
-G2L["8c"]["Size"] = UDim2.new(0, 250, 1, -50);
+G2L["8c"]["AnchorPoint"] = Vector2.new(1, 1);
+G2L["8c"]["Size"] = UDim2.new(0, 250, 0, 0);
 G2L["8c"]["ScrollBarImageColor3"] = Color3.fromRGB(0, 0, 0);
-G2L["8c"]["Position"] = UDim2.new(1, -25, 0.5, 0);
+G2L["8c"]["Position"] = UDim2.new(1, -25, 1, -25);
 G2L["8c"]["BorderColor3"] = Color3.fromRGB(0, 0, 0);
 G2L["8c"]["ScrollBarThickness"] = 0;
 G2L["8c"]["BackgroundTransparency"] = 1;
