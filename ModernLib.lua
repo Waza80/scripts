@@ -2463,6 +2463,12 @@ function Lib:CreateWindow(T)
 			NotificationButton.Size = UDim2.new(0, ButtonBounds.X + 12, 1, 0)
 		end
 
+		if Notification.Buttons.AbsoluteCanvasSize.X > Notification.Buttons.AbsoluteWindowSize.X then
+			Notification.Buttons.UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+		else
+			Notification.Buttons.UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+		end
+
 		Notification.Close.MouseButton1Click:Connect(function()
 			NotificationItem:Destroy()
 		end)
