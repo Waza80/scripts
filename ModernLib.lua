@@ -1645,12 +1645,9 @@ function Lib:CreateWindow(T)
 
 			if T["KeySetup"]["CheckFunc"](KeyAttempt) then
 				if T["KeySetup"]["SaveKey"] then
-					print("key Saving")
 					if T["KeySetup"]["SaveFile"] then
-						print(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"])
 						writefile(T["FolderName"] .. "/" .. T["KeySetup"]["SaveFile"], KeyAttempt)
 					else
-						print(T["FolderName"] .. "/" .. "Key")
 						writefile(T["FolderName"] .. "/" .. "Key", KeyAttempt)
 					end
 				end
@@ -2434,7 +2431,6 @@ function Lib:CreateWindow(T)
 		local hasButtons = #T["Buttons"] > 0
 		local NotificationBounds = TextService:GetTextSize(T["Content"], 14, Enum.Font.MontserratBold, Vector2.new(Notification.Desc.AbsoluteSize.X, math.huge))
 		Notification.Size = UDim2.new(1, 0, 0, 45 + ((hasButtons and 22) or 0) + NotificationBounds.Y)
-		print(((hasButtons and 26) or 0))
 
 		function NotificationItem:Destroy()
 			TweenService:Create(Notification, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {BackgroundTransparency = 1}):Play()
