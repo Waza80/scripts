@@ -1383,7 +1383,7 @@ local Lib = {}
 -- Hiding --
 
 for _, Item in next, G2L["1"]:GetChildren() do
-	if Item:IsA("Frame") then Item.Visible = false end
+	if Item:IsA("Frame") or Item:IsA("TextButton") then Item.Visible = false end
 end
 
 -- Function Setup --
