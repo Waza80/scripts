@@ -2104,14 +2104,14 @@ function Lib:CreateWindow(T)
 				Slider.Slider.Progression.Size = UDim2.new(Percentage, 0, 1, 0)
 				Slider.TextBox.Text = tostring(math.clamp(tonumber(FilteredString), T["Min"], T["Max"]))
 
+				SliderItem.Value = Slider.TextBox.Text
+
 				if T["Callback"] ~= nil then
 					if OldSliderValue ~= Slider.TextBox.Text then 
 						T["Callback"](Slider.TextBox.Text)
 						OldSliderValue = Slider.TextBox.Text
 					end
 				end
-
-				SliderItem.Value = Slider.TextBox.Text
 			end
 
 			Slider.TextBox:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
